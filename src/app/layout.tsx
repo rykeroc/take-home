@@ -39,8 +39,10 @@ export default function RootLayout({
 			className={`${montserrat.variable} antialiased`}
 		>
 		<NavigationMenu className={"mb-4"}/>
-		<div className={layoutClasses}>
-			{children}
+		<div className={cn("flex", "justify-center", "w-full")}>
+			<div className={layoutClasses}>
+				{children}
+			</div>
 		</div>
 		</body>
 		</html>
