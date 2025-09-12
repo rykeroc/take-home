@@ -17,6 +17,7 @@ interface IncomeCalculatorInput {
 type IncomeCalculatorOutput = HourlyWageResults & YearlyWageResults
 
 interface IncomeCalculator extends IncomeCalculatorInput, IncomeCalculatorOutput{
+	isCompleted: boolean;
 	handleInputChange: (field: keyof IncomeCalculatorInput, value: string | undefined) => void;
 	handleInputModeChange: (amountType: IncomeCalculatorAmountType) => void;
 	resetInput: () => void
@@ -75,12 +76,12 @@ export const useIncomeCalculator = (): IncomeCalculator => {
 		})
 	}, [inputState.amountType, inputState.amount, inputState.hoursPerWeek, inputState.daysPerWeek, setOutputState])
 
-	useEffect(() => {
-		console.log(outputState)
-	}, [outputState]);
+	const isCompleted = inputState.amount > 0 && inputState.hoursPerWeek > 0 && inputState.daysPerWeek > 0
+
 	return {
 		...inputState,
 		...outputState,
+		isCompleted,
 		resetInput,
 		handleInputChange,
 		handleInputModeChange,
