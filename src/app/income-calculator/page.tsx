@@ -8,12 +8,16 @@ import {IncomeCalculatorAmountType, useIncomeCalculator} from '@/hooks/useIncome
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
 import {Button} from '@/components/ui/button';
 import Link from 'next/link';
+import {TaxYears} from '@/lib/taxes/canadian-tax-calculator';
+import {CanadianProvinceNameToCodeMap} from '@/lib/canadian-provinces';
 
 export default function IncomeCalculator() {
 	const {
 		isCompleted,
 		handleInputModeChange,
 		handleInputChange,
+		handleProvinceCodeChange,
+		handleYearChange,
 		resetInput,
 		...calculatorState
 	} = useIncomeCalculator()
@@ -22,7 +26,15 @@ export default function IncomeCalculator() {
 		amount: calculatorState.amount === 0 ? "" : calculatorState.amount.toString(),
 		hoursPerWeek: calculatorState.hoursPerWeek === 0 ? "" : calculatorState.hoursPerWeek.toString(),
 		daysPerWeek: calculatorState.daysPerWeek === 0 ? "" : calculatorState.daysPerWeek.toString(),
+		provinceCode: calculatorState.provinceCode ?? "",
+		year: calculatorState.year?.toString() ?? "",
 	}
+
+	const canadianProvinceAndTerritorySelectItems = Object.entries(CanadianProvinceNameToCodeMap).map(([name, code]) => (
+		<SelectItem key={code} value={code}>{name}</SelectItem>
+	))
+
+	const taxYearSelectItems = TaxYears.map((year) => <SelectItem key={year} value={year.toString()}>{year}</SelectItem>)
 
 	const calculatorOutputs: { label: string, value: number }[] = [
 		{label: "Hourly", value: calculatorState.hourlyWage},
@@ -59,7 +71,7 @@ export default function IncomeCalculator() {
 			{/* Input */}
 			<Card>
 				<CardContent className={cn("flex", "flex-col", "gap-3")}>
-					<div className={cn("flex", "gap-1", "items-end")}>
+					<div className={cn("flex", "gap-3", "items-end")}>
 						<Input id={"amount"}
 						       label={"Amount"}
 						       type={"number"}
@@ -85,7 +97,7 @@ export default function IncomeCalculator() {
 						</Select>
 					</div>
 
-					<div className={cn("flex", "gap-1",)}>
+					<div className={cn("flex", "gap-3",)}>
 
 						<Input id={"hours-per-week"}
 						       label={"Hours per week"}
@@ -109,19 +121,53 @@ export default function IncomeCalculator() {
 				</CardContent>
 			</Card>
 
-			{/*	TODO: Additional input */}
-			{/*<Card>*/}
-			{/*	<CardContent>*/}
-			{/*	</CardContent>*/}
-			{/*</Card>*/}
+			<Card>
+				<CardContent>
+					<div className={cn("flex", "gap-3", "items-end")}>
+						{/* Province or Territory selection */}
+						<Select
+							label={"Province / Territory"}
+							value={formattedInputs.provinceCode}
+							onValueChange={(e) => handleProvinceCodeChange(e)}
+						>
+							<SelectTrigger className={cn("w-full")}>
+								<SelectValue placeholder="Select a province or territory"/>
+							</SelectTrigger>
+							<SelectContent>
+								{canadianProvinceAndTerritorySelectItems}
+							</SelectContent>
+						</Select>
 
+						{/* Tax year selection */}
+						<Select
+							label={"Year"}
+							value={formattedInputs.year}
+							onValueChange={(e) => handleYearChange(e)}
+						>
+							<SelectTrigger className={cn("w-full")}>
+								<SelectValue placeholder="Select tax year"/>
+							</SelectTrigger>
+							<SelectContent>
+								{taxYearSelectItems}
+							</SelectContent>
+						</Select>
+					</div>
+				</CardContent>
+			</Card>
+
+			{/* TODO: Add EI and CPP calculations */}
+			{/* TODO: Add tax breakdown numbers and chart */}
 			{
 				isCompleted && (
 					<>
 						{/*	Output */}
 						<Card>
-							<CardContent className={cn("flex", "flex-col", "md:grid", "md:grid-cols-2", "lg:grid-cols-4", "gap-3")}>
-								{outputElements}
+							<CardContent className={cn("flex", "flex-col", "gap-3",)}>
+								<div className={cn("flex", "flex-col", "md:grid", "md:grid-cols-2", "lg:grid-cols-5", "gap-3")}>
+									{outputElements}
+								</div>
+
+								<small className={"text-red-500"}>*The results on this page are meant to be used as approximations</small>
 							</CardContent>
 						</Card>
 

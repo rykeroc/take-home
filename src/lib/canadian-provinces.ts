@@ -10,7 +10,7 @@ export const CanadianProvinceAndTerritoryCodes = [
 
 export type CanadianProvinceOrTerritoryCode = typeof CanadianProvinceAndTerritoryCodes[number]
 
-export const ProvinceNameToCodeMap: Record<CanadianProvinceOrTerritory, CanadianProvinceOrTerritoryCode> = {
+export const CanadianProvinceNameToCodeMap: Record<CanadianProvinceOrTerritory, CanadianProvinceOrTerritoryCode> = {
 	'Alberta': 'AB',
 	'British Columbia': 'BC',
 	'Manitoba': 'MB',

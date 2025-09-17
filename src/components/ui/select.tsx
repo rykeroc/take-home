@@ -5,11 +5,18 @@ import * as SelectPrimitive from "@radix-ui/react-select"
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import {Label} from '@/components/ui/label';
 
 function Select({
+    label,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Root>) {
-  return <SelectPrimitive.Root data-slot="select" {...props} />
+}: React.ComponentProps<typeof SelectPrimitive.Root> & {label?: string}) {
+  return (
+	<div className="grid w-full items-center gap-3">
+		{label && <Label>{label}</Label>}
+	    <SelectPrimitive.Root data-slot="select" {...props} />
+	</div>
+  )
 }
 
 function SelectGroup({

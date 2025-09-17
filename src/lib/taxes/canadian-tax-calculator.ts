@@ -2,7 +2,7 @@ import * as federalTaxData from './canadian-federal-taxes.json'
 import * as provincialTaxData from './canadian-provincial-taxes.json'
 import {CanadianProvinceOrTerritoryCode} from '@/lib/canadian-provinces';
 
-const TaxYears = [
+export const TaxYears = [
 	2025
 ] as const
 
