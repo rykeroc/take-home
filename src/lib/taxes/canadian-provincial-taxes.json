@@ -1,0 +1,282 @@
+{
+  "2025": {
+    "AB": [
+      {
+        "incomeUpTo": 60000,
+        "rate": 0.08
+      },
+      {
+        "incomeUpTo": 151234,
+        "rate": 0.1
+      },
+      {
+        "incomeUpTo": 181481,
+        "rate": 0.12
+      },
+      {
+        "incomeUpTo": 241974,
+        "rate": 0.13
+      },
+      {
+        "incomeUpTo": 362961,
+        "rate": 0.14
+      },
+      {
+        "incomeUpTo": null,
+        "rate": 0.15
+      }
+    ],
+    "BC": [
+      {
+        "incomeUpTo": 49279,
+        "rate": 0.0506
+      },
+      {
+        "incomeUpTo": 98560,
+        "rate": 0.077
+      },
+      {
+        "incomeUpTo": 113158,
+        "rate": 0.105
+      },
+      {
+        "incomeUpTo": 137407,
+        "rate": 0.1229
+      },
+      {
+        "incomeUpTo": 186306,
+        "rate": 0.147
+      },
+      {
+        "incomeUpTo": 259829,
+        "rate": 0.168
+      },
+      {
+        "incomeUpTo": null,
+        "rate": 0.205
+      }
+    ],
+    "MB": [
+      {
+        "incomeUpTo": 47564,
+        "rate": 0.108
+      },
+      {
+        "incomeUpTo": 101200,
+        "rate": 0.1275
+      },
+      {
+        "incomeUpTo": null,
+        "rate": 0.174
+      }
+    ],
+    "NB": [
+      {
+        "incomeUpTo": 51306,
+        "rate": 0.094
+      },
+      {
+        "incomeUpTo": 102614,
+        "rate": 0.14
+      },
+      {
+        "incomeUpTo": 190060,
+        "rate": 0.16
+      },
+      {
+        "incomeUpTo": null,
+        "rate": 0.195
+      }
+    ],
+    "NL": [
+      {
+        "incomeUpTo": 44192,
+        "rate": 0.087
+      },
+      {
+        "incomeUpTo": 88382,
+        "rate": 0.145
+      },
+      {
+        "incomeUpTo": 157792,
+        "rate": 0.158
+      },
+      {
+        "incomeUpTo": 220910,
+        "rate": 0.178
+      },
+      {
+        "incomeUpTo": 282214,
+        "rate": 0.198
+      },
+      {
+        "incomeUpTo": 564429,
+        "rate": 0.208
+      },
+      {
+        "incomeUpTo": 1128858,
+        "rate": 0.213
+      },
+      {
+        "incomeUpTo": null,
+        "rate": 0.218
+      }
+    ],
+    "NT": [
+      {
+        "incomeUpTo": 51964,
+        "rate": 0.059
+      },
+      {
+        "incomeUpTo": 103930,
+        "rate": 0.086
+      },
+      {
+        "incomeUpTo": 168967,
+        "rate": 0.122
+      },
+      {
+        "incomeUpTo": null,
+        "rate": 0.1405
+      }
+    ],
+    "NS": [
+      {
+        "incomeUpTo": 30507,
+        "rate": 0.0879
+      },
+      {
+        "incomeUpTo": 61015,
+        "rate": 0.1495
+      },
+      {
+        "incomeUpTo": 95883,
+        "rate": 0.1667
+      },
+      {
+        "incomeUpTo": 154650,
+        "rate": 0.175
+      },
+      {
+        "incomeUpTo": null,
+        "rate": 0.21
+      }
+    ],
+    "NU": [
+      {
+        "incomeUpTo": 54707,
+        "rate": 0.04
+      },
+      {
+        "incomeUpTo": 109413,
+        "rate": 0.07
+      },
+      {
+        "incomeUpTo": 177881,
+        "rate": 0.09
+      },
+      {
+        "incomeUpTo": null,
+        "rate": 0.115
+      }
+    ],
+    "ON": [
+      {
+        "incomeUpTo": 52886,
+        "rate": 0.0505
+      },
+      {
+        "incomeUpTo": 105775,
+        "rate": 0.0915
+      },
+      {
+        "incomeUpTo": 150000,
+        "rate": 0.1116
+      },
+      {
+        "incomeUpTo": 220000,
+        "rate": 0.1216
+      },
+      {
+        "incomeUpTo": null,
+        "rate": 0.1316
+      }
+    ],
+    "PE": [
+      {
+        "incomeUpTo": 33328,
+        "rate": 0.095
+      },
+      {
+        "incomeUpTo": 64656,
+        "rate": 0.1347
+      },
+      {
+        "incomeUpTo": 105000,
+        "rate": 0.166
+      },
+      {
+        "incomeUpTo": 140000,
+        "rate": 0.1762
+      },
+      {
+        "incomeUpTo": null,
+        "rate": 0.19
+      }
+    ],
+    "QC": [
+      {
+        "incomeUpTo": 53255,
+        "rate": 0.14
+      },
+      {
+        "incomeUpTo": 106495,
+        "rate": 0.19
+      },
+      {
+        "incomeUpTo": 129590,
+        "rate": 0.24
+      },
+      {
+        "incomeUpTo": null,
+        "rate": 0.2575
+      }
+    ],
+    "SK": [
+      {
+        "incomeUpTo": 53463,
+        "rate": 0.105
+      },
+      {
+        "incomeUpTo": 152750,
+        "rate": 0.125
+      },
+      {
+        "incomeUpTo": null,
+        "rate": 0.145
+      }
+    ],
+    "YT": [
+      {
+        "incomeUpTo": 57375,
+        "rate": 0.064
+      },
+      {
+        "incomeUpTo": 114750,
+        "rate": 0.09
+      },
+      {
+        "incomeUpTo": 177882,
+        "rate": 0.109
+      },
+      {
+        "incomeUpTo": 500000,
+        "rate": 0.128
+      },
+      {
+        "incomeUpTo": null,
+        "rate": 0.15
+      }
+    ]
+  }
+}
