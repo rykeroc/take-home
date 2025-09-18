@@ -4,7 +4,7 @@ import {
 	calculateProvincialTax,
 	calculateCanadianTaxes,
 	TaxYear, TaxCalculationResult
-} from '@/lib/taxes/canadian-tax-calculator';
+} from '@/lib/deductions/canadian-tax-calculator';
 import {CanadianProvinceOrTerritoryCode} from '@/lib/canadian-provinces';
 
 type ProvincialInput = {

@@ -1,0 +1,18 @@
+{
+  "2025": {
+    "ROC": {
+      "rate": 0.0595,
+      "basicExemption": 3500,
+      "ympe": 71300,
+      "rate2": 0.040,
+      "yampe": 81200
+    },
+    "QC": {
+      "rate": 0.0540,
+      "basicExemption": 3500,
+      "ympe": 71300,
+      "rate2": 0.040,
+      "yampe": 81200
+    }
+  }
+}

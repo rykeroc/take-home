@@ -1,8 +1,9 @@
-import {calculateCanadianTaxes, TaxYear} from '@/lib/taxes/canadian-tax-calculator';
 import {CanadianProvinceOrTerritoryCode} from '@/lib/canadian-provinces';
 import React, {useEffect} from 'react';
+import {TaxYear} from '@/lib/deductions/canadian-deductions.types';
+import {calculatePayrollDeductions, PayrollDeductionsResult} from '@/lib/deductions/canadian-deductions';
 
-export interface TaxCalculator extends ReturnType<typeof calculateCanadianTaxes> {
+export interface DeductionsCalculator extends PayrollDeductionsResult {
 	isCompleted: boolean;
 	provinceCode: CanadianProvinceOrTerritoryCode | null;
 	year: TaxYear | null;
@@ -12,7 +13,7 @@ export interface TaxCalculator extends ReturnType<typeof calculateCanadianTaxes>
 	handleYearChange: (value: string | undefined) => void;
 }
 
-export function useTaxCalculator(): TaxCalculator {
+export function useDeductionsCalculator(): DeductionsCalculator {
 	const [annualIncome, setAnnualIncome] = React.useState<number | null>(null);
 	const handleAnnualIncomeChange = React.useCallback((value: string | undefined) => {
 		const parsedValue = value ? parseFloat(value) : null;
@@ -30,20 +31,26 @@ export function useTaxCalculator(): TaxCalculator {
 		setYear(parsedValue);
 	}, [])
 
-	const defaultOutputs = {
+	const defaultOutputs: PayrollDeductionsResult & Pick<DeductionsCalculator, "netAnnualIncome"> = {
 		totalFederalTax: 0,
 		totalProvincialTax: 0,
 		totalTax: 0,
 		netAnnualIncome: 0,
+		cppContribution: 0,
+		eiPremium: 0,
+		qpipPremium: 0,
+		totalContributions: 0,
+		totalDeductions: 0
 	}
 	const [outputs, setOutputs] = React.useState(defaultOutputs);
 
 	useEffect(() => {
 		if (!annualIncome || !provinceCode || !year) return
 
-		const taxResults = calculateCanadianTaxes(annualIncome, provinceCode, year);
-		const netAnnualIncome = annualIncome - taxResults.totalTax;
-		setOutputs({...taxResults, netAnnualIncome});
+		const deductionResults = calculatePayrollDeductions(annualIncome, provinceCode, year);
+		console.log("Deduction Results:", deductionResults);
+		const netAnnualIncome = annualIncome - (deductionResults.totalDeductions);
+		setOutputs({...deductionResults, netAnnualIncome});
 	}, [annualIncome, provinceCode, year, setOutputs]);
 
 	useEffect(() => {
