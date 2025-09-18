@@ -11,7 +11,7 @@ interface InputProps extends React.ComponentProps<"input"> {
 function Input({id, label, className, type, prefix, ...props}: InputProps) {
 	return (
 		<div className="grid w-full items-center gap-3">
-			{label && <Label htmlFor={id}>{label}</Label>}
+			{label && <Label htmlFor={id} className={cn("text-muted-foreground")}>{label}</Label>}
 			<div className={cn("flex", "gap-2", "w-full")}>
 				{
 					prefix && (

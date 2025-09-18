@@ -4,17 +4,24 @@ import {cn} from '@/lib/utils';
 import {Card, CardContent} from '@/components/ui/card';
 import React from 'react';
 import {Input} from '@/components/Input';
-import {IncomeCalculatorAmountType, useIncomeCalculator} from '@/hooks/useIncomeCalculator';
+import {GrossIncomeType, useIncomeCalculator} from '@/hooks/useIncomeCalculator';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
 import {Button} from '@/components/ui/button';
 import Link from 'next/link';
-import {TaxYears} from '@/lib/taxes/canadian-tax-calculator';
+import {TaxYears} from '@/lib/deductions/canadian-deductions.types';
 import {CanadianProvinceNameToCodeMap} from '@/lib/canadian-provinces';
+import {Separator} from '@/components/ui/separator';
+import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from '@/components/ui/table';
+
+type LabelValue = {
+	label: string;
+	value: number;
+}
 
 export default function IncomeCalculator() {
 	const {
 		isCompleted,
-		handleInputModeChange,
+		handleInputGrossIncomeTypeChange,
 		handleInputChange,
 		handleProvinceCodeChange,
 		handleYearChange,
@@ -23,7 +30,7 @@ export default function IncomeCalculator() {
 	} = useIncomeCalculator()
 
 	const formattedInputs = {
-		amount: calculatorState.amount === 0 ? "" : calculatorState.amount.toString(),
+		grossIncome: calculatorState.grossIncome === 0 ? "" : calculatorState.grossIncome.toString(),
 		hoursPerWeek: calculatorState.hoursPerWeek === 0 ? "" : calculatorState.hoursPerWeek.toString(),
 		daysPerWeek: calculatorState.daysPerWeek === 0 ? "" : calculatorState.daysPerWeek.toString(),
 		provinceCode: calculatorState.provinceCode ?? "",
@@ -36,7 +43,7 @@ export default function IncomeCalculator() {
 
 	const taxYearSelectItems = TaxYears.map((year) => <SelectItem key={year} value={year.toString()}>{year}</SelectItem>)
 
-	const calculatorOutputs: { label: string, value: number }[] = [
+	const wageOutputs: LabelValue[] = [
 		{label: "Hourly", value: calculatorState.hourlyWage},
 		{label: "Daily", value: calculatorState.dailyWage},
 		{label: "Weekly", value: calculatorState.weeklyWage},
@@ -44,7 +51,7 @@ export default function IncomeCalculator() {
 		{label: "Yearly", value: calculatorState.yearlyWage},
 	]
 
-	const outputElements = calculatorOutputs.map(({label, value}) =>
+	const wageElements = wageOutputs.map(({label, value}) =>
 		value === 0 ? null : (
 			<Input
 				key={label}
@@ -56,6 +63,24 @@ export default function IncomeCalculator() {
 				value={value.toFixed(2)}
 				readOnly
 			/>
+		)
+	)
+
+	const deductionOutputs: LabelValue[] = [
+		{label: "Gross Annual Income", value: calculatorState.grossAnnualIncome},
+		{label: "Federal Tax", value: calculatorState.totalFederalTax},
+		{label: "Provincial Tax", value: calculatorState.totalProvincialTax},
+		{label: "Total Tax", value: calculatorState.totalTax},
+		{label: "CPP", value: calculatorState.cppContribution},
+		{label: "EI", value: calculatorState.eiPremium},
+	]
+
+	const deductionRows = deductionOutputs.map(({label, value}) =>
+		value === 0 ? null : (
+			<TableRow key={label}>
+				<TableCell className={cn("text-muted-foreground")}>{label}</TableCell>
+				<TableCell>${value.toFixed(2)}</TableCell>
+			</TableRow>
 		)
 	)
 
@@ -71,6 +96,8 @@ export default function IncomeCalculator() {
 			{/* Input */}
 			<Card>
 				<CardContent className={cn("flex", "flex-col", "gap-3")}>
+					<h3 className={cn("text-place")}>Input</h3>
+
 					<div className={cn("flex", "gap-3", "items-end")}>
 						<Input id={"amount"}
 						       label={"Amount"}
@@ -79,15 +106,15 @@ export default function IncomeCalculator() {
 						       min="0"
 						       prefix={"$"}
 						       placeholder="0"
-						       value={formattedInputs.amount}
-						       onChange={(e) => handleInputChange("amount", e.target.value)}
+						       value={formattedInputs.grossIncome}
+						       onChange={(e) => handleInputChange("grossIncome", e.target.value)}
 						/>
 
 						<Select
-							value={calculatorState.amountType}
-							onValueChange={(e) => handleInputModeChange(e as IncomeCalculatorAmountType)}
+							value={calculatorState.grossIncomeType}
+							onValueChange={(e) => handleInputGrossIncomeTypeChange(e as GrossIncomeType)}
 						>
-							<SelectTrigger className={cn("w-1/3")}>
+							<SelectTrigger className={cn("w-1/2")}>
 								<SelectValue placeholder="Select income type"/>
 							</SelectTrigger>
 							<SelectContent>
@@ -98,7 +125,6 @@ export default function IncomeCalculator() {
 					</div>
 
 					<div className={cn("flex", "gap-3",)}>
-
 						<Input id={"hours-per-week"}
 						       label={"Hours per week"}
 						       type="number"
@@ -118,11 +144,8 @@ export default function IncomeCalculator() {
 						       onChange={(e) => handleInputChange("daysPerWeek", e.target.value)}
 						/>
 					</div>
-				</CardContent>
-			</Card>
 
-			<Card>
-				<CardContent>
+
 					<div className={cn("flex", "gap-3", "items-end")}>
 						{/* Province or Territory selection */}
 						<Select
@@ -155,24 +178,45 @@ export default function IncomeCalculator() {
 				</CardContent>
 			</Card>
 
-			{/* TODO: Add EI and CPP calculations */}
-			{/* TODO: Add tax breakdown numbers and chart */}
+			{/* TODO: Add pie chart for deductions */}
 			{
 				isCompleted && (
 					<>
 						{/*	Output */}
 						<Card>
 							<CardContent className={cn("flex", "flex-col", "gap-3",)}>
+								<h3>Net Income</h3>
 								<div className={cn("flex", "flex-col", "md:grid", "md:grid-cols-2", "lg:grid-cols-5", "gap-3")}>
-									{outputElements}
+									{wageElements}
 								</div>
 
-								<small className={"text-red-500"}>*The results on this page are meant to be used as approximations</small>
+								<Separator />
+
+								<h3>Annual Deduction Breakdown</h3>
+								<Table>
+									<TableHeader>
+										<TableRow>
+											<TableHead className={cn("w-4/5")}>Deduction</TableHead>
+											<TableHead className={cn()}>Amount</TableHead>
+										</TableRow>
+									</TableHeader>
+									<TableBody>
+										{deductionRows}
+									</TableBody>
+									<TableFooter>
+										<TableRow>
+											<TableCell>Net Income</TableCell>
+											<TableCell>${calculatorState.yearlyWage.toFixed(2)}</TableCell>
+										</TableRow>
+									</TableFooter>
+								</Table>
+
+								<small className={"text-red-400"}>*The results on this page may not be 100% accurate and should be used as approximations</small>
 							</CardContent>
 						</Card>
 
 						{/* Continue to Budget */}
-						<div className={cn("flex", "flex-col", "gap-2")}>
+						<div className={cn("flex", "flex-col", "gap-3")}>
 							<p>
 								You can use the results to create a custom budget by clicking the button below!
 							</p>

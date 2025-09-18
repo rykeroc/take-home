@@ -5,27 +5,28 @@ import {
 } from '@/components/lib/income-calculations';
 import {DeductionsCalculator, useDeductionsCalculator} from '@/hooks/useDeductionsCalculator';
 
-export type IncomeCalculatorAmountType = 'hourly' | 'yearly';
+export type GrossIncomeType = 'hourly' | 'yearly';
 
 interface IncomeCalculatorInput {
-	amount: number;
-	amountType: IncomeCalculatorAmountType
+	grossIncome: number;
+	grossIncomeType: GrossIncomeType
 	hoursPerWeek: number;
 	daysPerWeek: number;
 }
 
-interface IncomeCalculator extends IncomeCalculatorInput, WageResults, Omit<DeductionsCalculator, "netAnnualIncome" | "handleAnnualIncomeChange"> {
+interface IncomeCalculator extends IncomeCalculatorInput, WageResults, Omit<DeductionsCalculator, "netAnnualIncome" | "handleGrossAnnualIncomeChange" | "resetDeductionsInput" | "resetInputs"> {
 	isCompleted: boolean;
+	grossAnnualIncome: number;
 	handleInputChange: (field: keyof IncomeCalculatorInput, value: string | undefined) => void;
-	handleInputModeChange: (amountType: IncomeCalculatorAmountType) => void;
+	handleInputGrossIncomeTypeChange: (amountType: GrossIncomeType) => void;
 	resetInput: () => void
 }
 
 export const useIncomeCalculator = (): IncomeCalculator => {
 	const defaultInput: IncomeCalculatorInput = useMemo(() => ({
-		amount: 0,
-		amountType: 'hourly',
-		hoursPerWeek: 40,
+		grossIncome: 0,
+		grossIncomeType: 'hourly',
+		hoursPerWeek: 37.5,
 		daysPerWeek: 5,
 	}), [])
 	const [calculatorInput, setCalculatorInput] = useState<IncomeCalculatorInput>(defaultInput)
@@ -43,14 +44,15 @@ export const useIncomeCalculator = (): IncomeCalculator => {
 		isCompleted: isTaxCompleted,
 		provinceCode,
 		year,
-		handleAnnualIncomeChange,
+		handleGrossAnnualIncomeChange,
 		handleProvinceCodeChange,
 		handleYearChange,
-		...defuctionsResults
+		resetInputs: resetDeductionsInput,
+		...deductionsResults
 	} = useDeductionsCalculator();
 
-	const handleInputModeChange = React.useCallback((amountType: IncomeCalculatorAmountType) =>
-		setCalculatorInput(prevState => ({...prevState, amountType, amount: 0})), [])
+	const handleInputGrossIncomeTypeChange = React.useCallback((amountType: GrossIncomeType) =>
+		setCalculatorInput(prevState => ({...prevState, grossIncomeType: amountType, grossIncome: 0})), [])
 
 	const handleInputChange = React.useCallback((field: keyof IncomeCalculatorInput, value: string | undefined) => {
 		if (!value) {
@@ -64,32 +66,35 @@ export const useIncomeCalculator = (): IncomeCalculator => {
 		setCalculatorInput(prevState => ({...prevState, [field]: numericValue}))
 	}, [])
 
-	const resetInput = useCallback(() => setCalculatorInput(defaultInput), [defaultInput])
+	const resetInput = useCallback(() => {
+		setCalculatorInput(defaultInput)
+		resetDeductionsInput()
+	}, [defaultInput, resetDeductionsInput])
 
 	const resetOutput = useCallback(() => setWageResults(defaultWages), [defaultWages])
 
 	// Recalculate taxable income when input changes
 	useEffect(() => {
-		if (calculatorInput.amount <= 0 || calculatorInput.hoursPerWeek <= 0 || calculatorInput.daysPerWeek <= 0) {
+		if (calculatorInput.grossIncome <= 0 || calculatorInput.hoursPerWeek <= 0 || calculatorInput.daysPerWeek <= 0) {
 			resetOutput()
 			return;
 		}
 
 		// Calculate annual income for tax calculations
-		const taxableAnnualIncome = (calculatorInput.amountType === "hourly")
-			? calculateAnnualIncomeWithHourlyWage(calculatorInput.amount, calculatorInput.hoursPerWeek)
-			: calculatorInput.amount
+		const taxableAnnualIncome = (calculatorInput.grossIncomeType === "hourly")
+			? calculateAnnualIncomeWithHourlyWage(calculatorInput.grossIncome, calculatorInput.hoursPerWeek)
+			: calculatorInput.grossIncome
 
-		handleAnnualIncomeChange(taxableAnnualIncome.toString())
-	}, [calculatorInput.amountType, calculatorInput.amount, calculatorInput.hoursPerWeek, calculatorInput.daysPerWeek, resetOutput, handleAnnualIncomeChange])
+		handleGrossAnnualIncomeChange(taxableAnnualIncome.toString())
+	}, [calculatorInput.grossIncomeType, calculatorInput.grossIncome, calculatorInput.hoursPerWeek, calculatorInput.daysPerWeek, resetOutput, handleGrossAnnualIncomeChange])
 
 	// Recalculate output when input or tax info changes
 	useEffect(() => {
-		const newState = calculateIncome(defuctionsResults.netAnnualIncome, calculatorInput.hoursPerWeek, calculatorInput.daysPerWeek)
+		const newState = calculateIncome(deductionsResults.netAnnualIncome, calculatorInput.hoursPerWeek, calculatorInput.daysPerWeek)
 		setWageResults(newState)
-	}, [defuctionsResults.netAnnualIncome, calculatorInput.hoursPerWeek, calculatorInput.daysPerWeek, setWageResults]);
+	}, [deductionsResults.netAnnualIncome, calculatorInput.hoursPerWeek, calculatorInput.daysPerWeek, setWageResults]);
 
-	const isCompleted = isTaxCompleted && calculatorInput.amount > 0 && calculatorInput.hoursPerWeek > 0 && calculatorInput.daysPerWeek > 0
+	const isCompleted = isTaxCompleted && calculatorInput.grossIncome > 0 && calculatorInput.hoursPerWeek > 0 && calculatorInput.daysPerWeek > 0
 
 	return {
 		...calculatorInput,
@@ -99,9 +104,9 @@ export const useIncomeCalculator = (): IncomeCalculator => {
 		isCompleted,
 		resetInput,
 		handleInputChange,
-		handleInputModeChange,
+		handleInputGrossIncomeTypeChange,
 		handleProvinceCodeChange,
 		handleYearChange,
-		...defuctionsResults
+		...deductionsResults
 	}
 }
