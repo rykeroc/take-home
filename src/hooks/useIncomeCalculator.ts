@@ -14,7 +14,7 @@ interface IncomeCalculatorInput {
 	daysPerWeek: number;
 }
 
-interface IncomeCalculator extends IncomeCalculatorInput, WageResults, Omit<DeductionsCalculator, "netAnnualIncome" | "handleGrossAnnualIncomeChange" | "resetDeductionsInput" | "resetInputs"> {
+export interface IncomeCalculator extends IncomeCalculatorInput, WageResults, Omit<DeductionsCalculator, "netAnnualIncome" | "handleGrossAnnualIncomeChange" | "resetDeductionsInput" | "resetInputs"> {
 	isCompleted: boolean;
 	grossAnnualIncome: number;
 	handleInputChange: (field: keyof IncomeCalculatorInput, value: string | undefined) => void;

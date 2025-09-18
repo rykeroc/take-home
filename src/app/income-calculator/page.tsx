@@ -12,6 +12,7 @@ import {TaxYears} from '@/lib/deductions/canadian-deductions.types';
 import {CanadianProvinceNameToCodeMap} from '@/lib/canadian-provinces';
 import {Separator} from '@/components/ui/separator';
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from '@/components/ui/table';
+import IncomeDeductionsBreakdownPieChart from '@/components/IncomeDeductionsBreakdownPieChart';
 
 type LabelValue = {
 	label: string;
@@ -87,7 +88,10 @@ export default function IncomeCalculator() {
 	return (
 		<div className={cn("flex", "flex-col", "gap-4", "w-full")}>
 			<div className={cn("flex", "w-full", "justify-between")}>
-				<h1>Income Calculator</h1>
+				<div className={cn("flex", "flex-col", "gap-1")}>
+					<h1>Income Calculator</h1>
+					<p className={cn("text-muted-foreground")}>Calculate your income after deductions</p>
+				</div>
 				<Button variant={"ghost"} onClick={resetInput}>
 					Reset
 				</Button>
@@ -190,28 +194,32 @@ export default function IncomeCalculator() {
 									{wageElements}
 								</div>
 
-								<Separator />
+								<Separator className={cn("mt-2")}/>
 
 								<h3>Annual Deduction Breakdown</h3>
-								<Table>
-									<TableHeader>
-										<TableRow>
-											<TableHead className={cn("w-4/5")}>Deduction</TableHead>
-											<TableHead className={cn()}>Amount</TableHead>
-										</TableRow>
-									</TableHeader>
-									<TableBody>
-										{deductionRows}
-									</TableBody>
-									<TableFooter>
-										<TableRow>
-											<TableCell>Net Income</TableCell>
-											<TableCell>${calculatorState.yearlyWage.toFixed(2)}</TableCell>
-										</TableRow>
-									</TableFooter>
-								</Table>
+								<div className={cn("flex", "flex-col", "lg:flex-row", "gap-3",)}>
+									<Table>
+										<TableHeader>
+											<TableRow>
+												<TableHead className={cn("w-4/5")}>Deduction</TableHead>
+												<TableHead className={cn()}>Amount</TableHead>
+											</TableRow>
+										</TableHeader>
+										<TableBody>
+											{deductionRows}
+										</TableBody>
+										<TableFooter>
+											<TableRow>
+												<TableCell>Net Income</TableCell>
+												<TableCell>${calculatorState.yearlyWage.toFixed(2)}</TableCell>
+											</TableRow>
+										</TableFooter>
+									</Table>
 
-								<small className={"text-red-400"}>*The results on this page may not be 100% accurate and should be used as approximations</small>
+									<IncomeDeductionsBreakdownPieChart {...calculatorState} className={cn("lg:w-1/3")}/>
+								</div>
+
+								<small className={"text-red-400"}>*These results may not be 100% accurate and should be used as approximations</small>
 							</CardContent>
 						</Card>
 
