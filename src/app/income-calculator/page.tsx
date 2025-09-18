@@ -13,6 +13,7 @@ import {CanadianProvinceNameToCodeMap} from '@/lib/canadian-provinces';
 import {Separator} from '@/components/ui/separator';
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from '@/components/ui/table';
 import IncomeDeductionsBreakdownPieChart from '@/components/IncomeDeductionsBreakdownPieChart';
+import IncomeDeductionTable from '@/components/IncomeDeductionTable';
 
 type LabelValue = {
 	label: string;
@@ -182,7 +183,6 @@ export default function IncomeCalculator() {
 				</CardContent>
 			</Card>
 
-			{/* TODO: Add pie chart for deductions */}
 			{
 				isCompleted && (
 					<>
@@ -198,25 +198,9 @@ export default function IncomeCalculator() {
 
 								<h3>Annual Deduction Breakdown</h3>
 								<div className={cn("flex", "flex-col", "lg:flex-row", "gap-3",)}>
-									<Table>
-										<TableHeader>
-											<TableRow>
-												<TableHead className={cn("w-4/5")}>Deduction</TableHead>
-												<TableHead className={cn()}>Amount</TableHead>
-											</TableRow>
-										</TableHeader>
-										<TableBody>
-											{deductionRows}
-										</TableBody>
-										<TableFooter>
-											<TableRow>
-												<TableCell>Net Income</TableCell>
-												<TableCell>${calculatorState.yearlyWage.toFixed(2)}</TableCell>
-											</TableRow>
-										</TableFooter>
-									</Table>
+									<IncomeDeductionTable {...calculatorState}/>
 
-									<IncomeDeductionsBreakdownPieChart {...calculatorState} className={cn("lg:w-1/3")}/>
+									<IncomeDeductionsBreakdownPieChart {...calculatorState} className={cn("xl:w-1/3", "lg:w-1/2")}/>
 								</div>
 
 								<small className={"text-red-400"}>*These results may not be 100% accurate and should be used as approximations</small>
