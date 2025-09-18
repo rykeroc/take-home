@@ -3,8 +3,8 @@ import {cn, formatCurrency} from '@/lib/utils';
 import React from 'react';
 import {IncomeCalculator} from '@/hooks/useIncomeCalculator';
 
-interface IncomeDeductionTableProps extends Pick<IncomeCalculator,
-"totalFederalTax" | "totalProvincialTax" | "totalTax" | "cppContribution" | "eiPremium" | "grossAnnualIncome" | "totalDeductions">{}
+type IncomeDeductionTableProps = Pick<IncomeCalculator,
+"totalFederalTax" | "totalProvincialTax" | "totalTax" | "cppContribution" | "eiPremium" | "grossAnnualIncome" | "totalDeductions">
 
 export default function IncomeDeductionTable(props: IncomeDeductionTableProps) {
 	const deductionOutputs = [

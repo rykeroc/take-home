@@ -1,5 +1,5 @@
 import {CanadianProvinceOrTerritoryCode} from '@/lib/canadian-provinces';
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {TaxYear} from '@/lib/deductions/canadian-deductions.types';
 import {calculatePayrollDeductions, PayrollDeductionsResult} from '@/lib/deductions/canadian-deductions';
 
@@ -22,11 +22,13 @@ interface DeductionsCalculatorParams {
 }
 
 export function useDeductionsCalculator(): DeductionsCalculator {
-	const defaultParams: DeductionsCalculatorParams = {
-		grossAnnualIncome: 0,
-		provinceCode: null,
-		year: null,
-	}
+	const defaultParams: DeductionsCalculatorParams =  useMemo(() => {
+		return {
+			grossAnnualIncome: 0,
+			provinceCode: null,
+			year: null,
+		}
+	}, [])
 	const [params, setParams] = React.useState<DeductionsCalculatorParams>(defaultParams);
 	const handleGrossAnnualIncomeChange = React.useCallback((value: string | undefined) => {
 		const parsedValue = value ? parseFloat(value) : 0;
@@ -42,7 +44,7 @@ export function useDeductionsCalculator(): DeductionsCalculator {
 
 	const resetInputs = React.useCallback(() => {
 		setParams(defaultParams);
-	}, [setParams]);
+	}, [setParams, defaultParams]);
 
 	const defaultOutputs: PayrollDeductionsResult & Pick<DeductionsCalculator, "netAnnualIncome"> = {
 		totalFederalTax: 0,

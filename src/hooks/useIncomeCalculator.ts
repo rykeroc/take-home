@@ -14,7 +14,7 @@ interface IncomeCalculatorInput {
 	daysPerWeek: number;
 }
 
-export interface IncomeCalculator extends IncomeCalculatorInput, WageResults, Omit<DeductionsCalculator, "netAnnualIncome" | "handleGrossAnnualIncomeChange" | "resetDeductionsInput" | "resetInputs"> {
+export interface IncomeCalculator extends IncomeCalculatorInput, Omit<WageResults, "yearlyWage">, Omit<DeductionsCalculator, "handleGrossAnnualIncomeChange" | "resetDeductionsInput" | "resetInputs"> {
 	isCompleted: boolean;
 	grossAnnualIncome: number;
 	handleInputChange: (field: keyof IncomeCalculatorInput, value: string | undefined) => void;
@@ -91,6 +91,7 @@ export const useIncomeCalculator = (): IncomeCalculator => {
 	// Recalculate output when input or tax info changes
 	useEffect(() => {
 		const newState = calculateIncome(deductionsResults.netAnnualIncome, calculatorInput.hoursPerWeek, calculatorInput.daysPerWeek)
+		console.log("New Wage Results:", newState);
 		setWageResults(newState)
 	}, [deductionsResults.netAnnualIncome, calculatorInput.hoursPerWeek, calculatorInput.daysPerWeek, setWageResults]);
 
@@ -98,15 +99,15 @@ export const useIncomeCalculator = (): IncomeCalculator => {
 
 	return {
 		...calculatorInput,
+		...wageResults,
+		...deductionsResults,
 		provinceCode,
 		year,
-		...wageResults,
 		isCompleted,
 		resetInput,
 		handleInputChange,
 		handleInputGrossIncomeTypeChange,
 		handleProvinceCodeChange,
 		handleYearChange,
-		...deductionsResults
 	}
 }

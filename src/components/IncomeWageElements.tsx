@@ -3,7 +3,7 @@ import React from 'react';
 import {Input} from '@/components/Input';
 import {IncomeCalculator} from '@/hooks/useIncomeCalculator';
 
-interface IncomeWageElementsProps extends Pick<IncomeCalculator, "hourlyWage" | "dailyWage" | "weeklyWage" | "monthlyWage" | "yearlyWage">{}
+type IncomeWageElementsProps = Pick<IncomeCalculator, "hourlyWage" | "dailyWage" | "weeklyWage" | "monthlyWage" | "netAnnualIncome">
 
 export default function IncomeWageElements(props: IncomeWageElementsProps) {
 	console.log("IncomeWageElements props:", props);
@@ -12,7 +12,7 @@ export default function IncomeWageElements(props: IncomeWageElementsProps) {
 		{label: "Daily", value: props.dailyWage},
 		{label: "Weekly", value: props.weeklyWage},
 		{label: "Monthly", value: props.monthlyWage},
-		{label: "Yearly", value: props.yearlyWage},
+		{label: "Yearly", value: props.netAnnualIncome},
 	]
 
 	const wageElements = wageOutputs.map(({label, value}) => {
