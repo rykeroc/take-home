@@ -3,7 +3,6 @@ import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from '@/
 import {Pie, PieChart, PieLabel} from 'recharts';
 import * as React from 'react';
 import {formatCurrency} from '@/lib/utils';
-import {Formatter} from 'recharts/types/component/DefaultTooltipContent';
 
 interface IncomeDeductionsBreakdownPieChartProps extends Pick<IncomeCalculator,
 	"totalFederalTax" | "totalProvincialTax" | "totalTax" | "cppContribution" | "eiPremium" | "grossAnnualIncome">,

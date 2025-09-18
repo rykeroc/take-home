@@ -11,14 +11,9 @@ import Link from 'next/link';
 import {TaxYears} from '@/lib/deductions/canadian-deductions.types';
 import {CanadianProvinceNameToCodeMap} from '@/lib/canadian-provinces';
 import {Separator} from '@/components/ui/separator';
-import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from '@/components/ui/table';
 import IncomeDeductionsBreakdownPieChart from '@/components/IncomeDeductionsBreakdownPieChart';
 import IncomeDeductionTable from '@/components/IncomeDeductionTable';
-
-type LabelValue = {
-	label: string;
-	value: number;
-}
+import IncomeWageElements from '@/components/IncomeWageElements';
 
 export default function IncomeCalculator() {
 	const {
@@ -44,47 +39,6 @@ export default function IncomeCalculator() {
 	))
 
 	const taxYearSelectItems = TaxYears.map((year) => <SelectItem key={year} value={year.toString()}>{year}</SelectItem>)
-
-	const wageOutputs: LabelValue[] = [
-		{label: "Hourly", value: calculatorState.hourlyWage},
-		{label: "Daily", value: calculatorState.dailyWage},
-		{label: "Weekly", value: calculatorState.weeklyWage},
-		{label: "Monthly", value: calculatorState.monthlyWage},
-		{label: "Yearly", value: calculatorState.yearlyWage},
-	]
-
-	const wageElements = wageOutputs.map(({label, value}) =>
-		value === 0 ? null : (
-			<Input
-				key={label}
-				id={label}
-				label={label}
-				type={"number"}
-				prefix={"$"}
-				placeholder="0"
-				value={value.toFixed(2)}
-				readOnly
-			/>
-		)
-	)
-
-	const deductionOutputs: LabelValue[] = [
-		{label: "Gross Annual Income", value: calculatorState.grossAnnualIncome},
-		{label: "Federal Tax", value: calculatorState.totalFederalTax},
-		{label: "Provincial Tax", value: calculatorState.totalProvincialTax},
-		{label: "Total Tax", value: calculatorState.totalTax},
-		{label: "CPP", value: calculatorState.cppContribution},
-		{label: "EI", value: calculatorState.eiPremium},
-	]
-
-	const deductionRows = deductionOutputs.map(({label, value}) =>
-		value === 0 ? null : (
-			<TableRow key={label}>
-				<TableCell className={cn("text-muted-foreground")}>{label}</TableCell>
-				<TableCell>${value.toFixed(2)}</TableCell>
-			</TableRow>
-		)
-	)
 
 	return (
 		<div className={cn("flex", "flex-col", "gap-4", "w-full")}>
@@ -190,9 +144,7 @@ export default function IncomeCalculator() {
 						<Card>
 							<CardContent className={cn("flex", "flex-col", "gap-3",)}>
 								<h3>Net Income</h3>
-								<div className={cn("flex", "flex-col", "md:grid", "md:grid-cols-2", "lg:grid-cols-5", "gap-3")}>
-									{wageElements}
-								</div>
+								<IncomeWageElements {...calculatorState}/>
 
 								<Separator className={cn("mt-2")}/>
 
