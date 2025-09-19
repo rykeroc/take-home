@@ -2,7 +2,8 @@ import {IncomeCalculator} from '@/hooks/useIncomeCalculator';
 import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from '@/components/ui/chart';
 import {Pie, PieChart, PieLabel} from 'recharts';
 import * as React from 'react';
-import {formatCurrency} from '@/lib/utils';
+import {cn, formatCurrency} from '@/lib/utils';
+import {NameType, ValueType} from 'recharts/types/component/DefaultTooltipContent';
 
 interface IncomeDeductionsBreakdownPieChartProps extends Pick<IncomeCalculator,
 	"totalFederalTax" | "totalProvincialTax" | "totalTax" | "cppContribution" | "eiPremium" | "grossAnnualIncome">,
@@ -58,10 +59,31 @@ export default function IncomeDeductionsBreakdownPieChart(props: IncomeDeduction
 		},
 	}
 
+	const formatter = React.useCallback((value: ValueType, name: NameType) => {
+		const {label, color} = chartConfig[name]
+		return (
+			<div className={cn("flex", "gap-2")}>
+				<div
+					className={cn("shrink-0", "rounded-[2px]", "border-(--color-border)", "bg-(--color-bg)", "h-4.5", "w-4.5")}
+					style={
+						{
+							"--color-bg": color,
+							"--color-border": color,
+						} as React.CSSProperties
+					}
+				/>
+				<div className={cn("flex", "flex-col")}>
+					<small className={cn("text-muted-foreground")}>{label}</small>
+					<p>{formatCurrency(value as number)}</p>
+				</div>
+			</div>
+		)
+	}, [])
+
 	return (
 		<ChartContainer config={chartConfig} className={props.className}>
 			<PieChart>
-				<ChartTooltip content={<ChartTooltipContent formatter={(value) => formatCurrency(value as number)} hideLabel/>} />
+				<ChartTooltip content={<ChartTooltipContent formatter={formatter} hideLabel/>} />
 				<Pie data={pieData} nameKey={"name"} dataKey={"value"} label={pieLabelFormatter} innerRadius={60}/>
 			</PieChart>
 		</ChartContainer>
