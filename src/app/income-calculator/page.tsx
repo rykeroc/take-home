@@ -165,7 +165,7 @@ export default function IncomeCalculator() {
 								You can use the results to create a custom budget by clicking the button below!
 							</p>
 							<Button className={cn("w-fit")} asChild>
-								<Link href={"/budget-planner"}>
+								<Link href={`/budget-planner?netIncome=${calculatorState.netAnnualIncome.toFixed(2)}`}>
 									Create Budget
 								</Link>
 							</Button>
