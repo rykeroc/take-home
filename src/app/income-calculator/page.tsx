@@ -1,7 +1,7 @@
 "use client";
 
 import {cn} from '@/lib/utils';
-import {Card, CardContent} from '@/components/ui/card';
+import {Card, CardContent, CardFooter, CardHeader, CardTitle} from '@/components/ui/card';
 import React from 'react';
 import {Input} from '@/components/Input';
 import {GrossIncomeType, useIncomeCalculator} from '@/hooks/useIncomeCalculator';
@@ -10,12 +10,11 @@ import {Button} from '@/components/ui/button';
 import Link from 'next/link';
 import {TaxYears} from '@/lib/deductions/canadian-deductions.types';
 import {CanadianProvinceNameToCodeMap} from '@/lib/canadian-provinces';
-import {Separator} from '@/components/ui/separator';
 import IncomeDeductionsBreakdownPieChart from '@/components/IncomeDeductionsBreakdownPieChart';
 import IncomeDeductionTable from '@/components/IncomeDeductionTable';
 import IncomeWageElements from '@/components/IncomeWageElements';
 
-export default function IncomeCalculator() {
+export default function IncomeCalculatorPage() {
 	const {
 		isCompleted,
 		handleInputGrossIncomeTypeChange,
@@ -54,9 +53,10 @@ export default function IncomeCalculator() {
 
 			{/* Input */}
 			<Card>
+				<CardHeader>
+					<CardTitle>Inputs</CardTitle>
+				</CardHeader>
 				<CardContent className={cn("flex", "flex-col", "gap-3")}>
-					<h3 className={cn("text-place")}>Input</h3>
-
 					<div className={cn("flex", "gap-3", "items-end")}>
 						<Input id={"amount"}
 						       label={"Amount"}
@@ -137,26 +137,33 @@ export default function IncomeCalculator() {
 				</CardContent>
 			</Card>
 
+			{/*	Outputs */}
 			{
 				isCompleted && (
 					<>
-						{/*	Output */}
 						<Card>
+							<CardHeader>
+								<CardTitle>Net Income</CardTitle>
+							</CardHeader>
 							<CardContent className={cn("flex", "flex-col", "gap-3",)}>
-								<h3>Net Income</h3>
 								<IncomeWageElements {...calculatorState}/>
+							</CardContent>
+						</Card>
 
-								<Separator className={cn("mt-2")}/>
-
-								<h3>Annual Deduction Breakdown</h3>
+						<Card>
+							<CardHeader>
+								<CardTitle>Annual Deduction Breakdown</CardTitle>
+							</CardHeader>
+							<CardContent>
 								<div className={cn("flex", "flex-col", "lg:flex-row", "gap-3",)}>
 									<IncomeDeductionTable {...calculatorState}/>
 
 									<IncomeDeductionsBreakdownPieChart {...calculatorState} className={cn("xl:w-1/3", "lg:w-1/2")}/>
 								</div>
-
-								<small className={"text-red-400"}>*These results may not be 100% accurate and should be used as approximations</small>
 							</CardContent>
+							<CardFooter>
+								<small className={"text-red-400"}>*These results may not be 100% accurate and should be used as approximations</small>
+							</CardFooter>
 						</Card>
 
 						{/* Continue to Budget */}
@@ -165,7 +172,7 @@ export default function IncomeCalculator() {
 								You can use the results to create a custom budget by clicking the button below!
 							</p>
 							<Button className={cn("w-fit")} asChild>
-								<Link href={`/budget-planner?netIncome=${calculatorState.netAnnualIncome.toFixed(2)}`}>
+								<Link href={`/budget-planner?monthlyBudget=${calculatorState.monthlyWage.toFixed(2)}`}>
 									Create Budget
 								</Link>
 							</Button>
