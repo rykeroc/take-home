@@ -9,7 +9,7 @@ export interface MonthlyBudgetPlanner {
 	handleBudgetChange: (value: string) => void;
 	resetBudget: () => void;
 	categories: BudgetCategory[];
-	addCategory: (name: string, amount: number) => boolean;
+	addCategory: (name: string, amount: number, color: string) => boolean;
 	updateCategory: (name: string, amount: number) => boolean;
 	removeCategory: (name: string) => void;
 	categoryExists: (name: string) => boolean;
@@ -19,9 +19,10 @@ export interface MonthlyBudgetPlanner {
 	resetCategoryError: () => void;
 }
 
-interface BudgetCategory {
+export interface BudgetCategory {
 	name: string;
 	amount: number;
+	color: string;
 }
 
 export default function useMonthlyBudgetPlanner(props: MonthlyBudgetPlannerProps): MonthlyBudgetPlanner {
@@ -57,7 +58,7 @@ export default function useMonthlyBudgetPlanner(props: MonthlyBudgetPlannerProps
 		return amount + allocatedAmount <= budget;
 	}
 
-	const addCategory = (name: string, amount: number): boolean => {
+	const addCategory = (name: string, amount: number, color: string): boolean => {
 		if (!isValidCategoryName(name)) {
 			// Category with the same name already exists
 			setCategoryError(`Category with name '${name}' already exists`);
@@ -68,7 +69,7 @@ export default function useMonthlyBudgetPlanner(props: MonthlyBudgetPlannerProps
 			setCategoryError('Amount exceeds unallocated budget');
 			return false;
 		}
-		setCategories(prev => [...prev, {name, amount}]);
+		setCategories(prev => [...prev, {name, amount, color}]);
 		return true
 	}
 	const updateCategory = (name: string, amount: number): boolean => {
