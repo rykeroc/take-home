@@ -9,6 +9,7 @@ import {Input} from '@/components/Input';
 import {Separator} from '@/components/ui/separator';
 import BudgetCategoryList from '@/components/BudgetCategoryList';
 import {Button} from '@/components/ui/button';
+import BudgetCategoriesBreakdownPieChart from '@/components/BudgetCategoriesBreakdownPieChart';
 
 export default function BudgetPlannerPage() {
 	const searchParams = useSearchParams();
@@ -38,7 +39,7 @@ export default function BudgetPlannerPage() {
 			{/* Inputs */}
 			<Card>
 				<CardHeader>
-					<CardTitle>Inputs</CardTitle>
+					<CardTitle>Budget Information</CardTitle>
 				</CardHeader>
 				<CardContent className={cn("flex", "flex-col", "gap-4")}>
 					<Input
@@ -64,7 +65,7 @@ export default function BudgetPlannerPage() {
 			</Card>
 
 			{
-				budget !== 0 && (
+				categoryHandlers.categories.length !== 0 && (
 					<>
 						{/* Summary */}
 						<Card>
@@ -72,7 +73,7 @@ export default function BudgetPlannerPage() {
 								<CardTitle>Summary</CardTitle>
 							</CardHeader>
 							<CardContent>
-								Summary will go here
+								<BudgetCategoriesBreakdownPieChart {...categoryHandlers}/>
 							</CardContent>
 						</Card>
 					</>

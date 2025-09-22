@@ -14,12 +14,17 @@ export interface MonthlyBudgetPlanner {
 	removeCategory: (name: string) => void;
 	categoryExists: (name: string) => boolean;
 	resetCategories: () => void;
-	unallocatedAmount: number;
+	unallocatedBudget: BudgetCategory;
 	categoryError: string | null;
 	resetCategoryError: () => void;
 }
 
+export type UnallocatedId = "unallocated";
+
+export type BudgetCategoryIdType = string | UnallocatedId;
+
 export interface BudgetCategory {
+	id: BudgetCategoryIdType
 	name: string;
 	amount: number;
 	color: string;
@@ -35,7 +40,12 @@ export default function useMonthlyBudgetPlanner(props: MonthlyBudgetPlannerProps
 	const [categoryError, setCategoryError] = useState<string | null>(null);
 
 	const allocatedAmount = useMemo(() => categories.reduce((acc, category) => acc + category.amount, 0), [categories]);
-	const unallocatedAmount = useMemo(() => budget - allocatedAmount, [budget, allocatedAmount]);
+	const unallocatedBudget = useMemo(() => ({
+		id: "unallocated",
+		name: "Unallocated",
+		amount: budget - allocatedAmount,
+		color: "#232323"
+	}) as BudgetCategory, [budget, allocatedAmount]);
 
 	const resetCategoryError = () => setCategoryError(null);
 
@@ -69,7 +79,9 @@ export default function useMonthlyBudgetPlanner(props: MonthlyBudgetPlannerProps
 			setCategoryError('Amount exceeds unallocated budget');
 			return false;
 		}
-		setCategories(prev => [...prev, {name, amount, color}]);
+
+		const id = crypto.randomUUID();
+		setCategories(prev => [...prev, {id, name, amount, color}]);
 		return true
 	}
 	const updateCategory = (name: string, amount: number): boolean => {
@@ -106,7 +118,7 @@ export default function useMonthlyBudgetPlanner(props: MonthlyBudgetPlannerProps
 		removeCategory,
 		categoryExists,
 		resetCategories,
-		unallocatedAmount,
+		unallocatedBudget,
 		categoryError,
 		resetCategoryError
 	};
