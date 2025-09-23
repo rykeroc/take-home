@@ -1,24 +1,32 @@
-import {IncomeCalculator} from '@/hooks/useIncomeCalculator';
 import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from '@/components/ui/chart';
 import {Pie, PieChart, PieLabel} from 'recharts';
 import * as React from 'react';
 import {cn, formatCurrency} from '@/lib/utils';
 import {NameType, ValueType} from 'recharts/types/component/DefaultTooltipContent';
+import {useIncomeCalculatorContext} from '@/app/contexts/IncomeCalculatorContext';
+import {useMemo} from 'react';
 
-interface IncomeDeductionsBreakdownPieChartProps extends Pick<IncomeCalculator,
-	"totalFederalTax" | "totalProvincialTax" | "totalTax" | "cppContribution" | "eiPremium" | "grossAnnualIncome">,
-	React.ComponentProps<"div">{}
+type IncomeDeductionsBreakdownPieChartProps = React.ComponentProps<"div">
 
 type PieName = 'federal-tax' | 'provincial-tax' | 'cpp' | 'ei' | 'net-income';
 type PieValue = number
 
 export default function IncomeDeductionsBreakdownPieChart(props: IncomeDeductionsBreakdownPieChartProps) {
-	const netIncome = props.grossAnnualIncome - props.totalTax - props.cppContribution - props.eiPremium;
+	const {
+		grossAnnualIncome,
+		totalTax,
+		cppContribution,
+		eiPremium,
+		totalFederalTax,
+		totalProvincialTax
+	} = useIncomeCalculatorContext()
+
+	const netIncome = grossAnnualIncome - totalTax - cppContribution - eiPremium;
 	const pieData: {name: PieName, value: PieValue, fill: string}[]  = [
-		{ name: 'federal-tax', value: props.totalFederalTax, fill: "var(--color-federal-tax" },
-		{ name: 'provincial-tax', value: props.totalProvincialTax, fill: "var(--color-provincial-tax" },
-		{ name: 'cpp', value: props.cppContribution, fill: "var(--color-cpp" },
-		{ name: 'ei', value: props.eiPremium, fill: "var(--color-ei" },
+		{ name: 'federal-tax', value: totalFederalTax, fill: "var(--color-federal-tax" },
+		{ name: 'provincial-tax', value: totalProvincialTax, fill: "var(--color-provincial-tax" },
+		{ name: 'cpp', value: cppContribution, fill: "var(--color-cpp" },
+		{ name: 'ei', value: eiPremium, fill: "var(--color-ei" },
 		{ name: 'net-income', value: netIncome, fill: "var(--color-net-income" },
 	]
 
@@ -36,7 +44,7 @@ export default function IncomeDeductionsBreakdownPieChart(props: IncomeDeduction
 		</text>
 	)
 
-	const chartConfig: ChartConfig = {
+	const chartConfig: ChartConfig = useMemo(() => ({
 		"federal-tax": {
 			label: "Federal Tax",
 			color: "var(--chart-1)",
@@ -57,7 +65,7 @@ export default function IncomeDeductionsBreakdownPieChart(props: IncomeDeduction
 			label: "Net Income",
 			color: "var(--chart-5)",
 		},
-	}
+	}), [])
 
 	const formatter = React.useCallback((value: ValueType, name: NameType) => {
 		const {label, color} = chartConfig[name]
@@ -78,7 +86,7 @@ export default function IncomeDeductionsBreakdownPieChart(props: IncomeDeduction
 				</div>
 			</div>
 		)
-	}, [])
+	}, [chartConfig])
 
 	return (
 		<ChartContainer config={chartConfig} className={props.className}>

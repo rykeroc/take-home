@@ -1,31 +1,40 @@
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from '@/components/ui/table';
 import {cn, formatCurrency} from '@/lib/utils';
 import React from 'react';
-import {IncomeCalculator} from '@/hooks/useIncomeCalculator';
+import {useIncomeCalculatorContext} from '@/app/contexts/IncomeCalculatorContext';
 
-type IncomeDeductionTableProps = Pick<IncomeCalculator,
-"totalFederalTax" | "totalProvincialTax" | "totalTax" | "cppContribution" | "eiPremium" | "grossAnnualIncome" | "totalDeductions">
+export default function IncomeDeductionTable() {
+	const {
+		grossAnnualIncome,
+		totalFederalTax,
+		totalProvincialTax,
+		totalTax,
+		cppContribution,
+		eiPremium,
+		totalDeductions
+	} = useIncomeCalculatorContext();
 
-export default function IncomeDeductionTable(props: IncomeDeductionTableProps) {
 	const deductionOutputs = [
-		{label: "Gross Annual Income", value: formatCurrency(props.grossAnnualIncome)},
-		{label: "Federal Tax", value: formatCurrency(props.totalFederalTax)},
-		{label: "Provincial Tax", value: formatCurrency(props.totalProvincialTax)},
-		{label: "Total Tax", value: formatCurrency(props.totalTax)},
-		{label: "CPP", value: formatCurrency(props.cppContribution)},
-		{label: "EI", value: formatCurrency(props.eiPremium)},
+		{label: "Gross Annual Income", value: grossAnnualIncome},
+		{label: "Federal Tax", value: totalFederalTax},
+		{label: "Provincial Tax", value: totalProvincialTax},
+		{label: "Total Tax", value: totalTax},
+		{label: "CPP", value: cppContribution},
+		{label: "EI", value: eiPremium},
 	]
 
 	const deductionTableRows = deductionOutputs.map(({label, value}) =>
-		value === "0.00" ? null : (
+		value === 0 ? null : (
 			<TableRow key={label}>
 				<TableCell className={cn("text-muted-foreground")}>{label}</TableCell>
-				<TableCell>{value}</TableCell>
+				<TableCell>
+					{formatCurrency(value)}
+				</TableCell>
 			</TableRow>
 		)
 	)
 
-	const netAnnualIncome = formatCurrency(props.grossAnnualIncome - props.totalDeductions);
+	const netAnnualIncome = formatCurrency(grossAnnualIncome - totalDeductions);
 
 	return (
 		<Table>

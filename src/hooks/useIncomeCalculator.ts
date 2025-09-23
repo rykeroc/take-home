@@ -91,11 +91,13 @@ export const useIncomeCalculator = (): IncomeCalculator => {
 	// Recalculate output when input or tax info changes
 	useEffect(() => {
 		const newState = calculateIncome(deductionsResults.netAnnualIncome, calculatorInput.hoursPerWeek, calculatorInput.daysPerWeek)
-		console.log("New Wage Results:", newState);
 		setWageResults(newState)
 	}, [deductionsResults.netAnnualIncome, calculatorInput.hoursPerWeek, calculatorInput.daysPerWeek, setWageResults]);
 
-	const isCompleted = isTaxCompleted && calculatorInput.grossIncome > 0 && calculatorInput.hoursPerWeek > 0 && calculatorInput.daysPerWeek > 0
+	const isCompleted = useMemo(() =>
+			isTaxCompleted && calculatorInput.grossIncome > 0 && calculatorInput.hoursPerWeek > 0 && calculatorInput.daysPerWeek > 0,
+		[isTaxCompleted, calculatorInput]
+	)
 
 	return {
 		...calculatorInput,

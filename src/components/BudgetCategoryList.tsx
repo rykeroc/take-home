@@ -1,3 +1,5 @@
+/* eslint-disable react/no-children-prop */
+
 import {cn, getRandomColor} from '@/lib/utils';
 import {Input} from '@/components/Input';
 import {Button} from '@/components/ui/button';
@@ -65,7 +67,7 @@ function NewBudgetCategoryForm() {
 
 	const amountRef = useRef<HTMLInputElement>(null);
 	const handleFocusAmountInput = () => {
-		amountRef.current && amountRef.current.focus();
+		if (amountRef.current) amountRef.current.focus();
 	}
 
 	const form = useForm({
@@ -83,9 +85,7 @@ function NewBudgetCategoryForm() {
 			}
 		},
 		validators: {
-			onChange: () => {
-				resetCategoryError && resetCategoryError();
-			}
+			onChange: resetCategoryError
 		}
 	})
 
