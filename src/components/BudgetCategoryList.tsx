@@ -1,4 +1,3 @@
-import {MonthlyBudgetPlanner} from '@/hooks/useMonthlyBudgetPlanner';
 import {cn, getRandomColor} from '@/lib/utils';
 import {Input} from '@/components/Input';
 import {Button} from '@/components/ui/button';
@@ -7,11 +6,10 @@ import {Label} from '@/components/ui/label';
 import {AnyFieldApi, useForm} from '@tanstack/react-form';
 import {FormEvent, useRef} from 'react';
 import {Table, TableBody, TableCell, TableRow} from '@/components/ui/table';
+import {useMonthlyBudgetPlannerContext} from '@/app/contexts/MonthlyBudgetPlannerContext';
 
-type BudgetCategoryListProps = Pick<MonthlyBudgetPlanner, "categories" | "addCategory" | "updateCategory" | "removeCategory" | "resetCategories" | "unallocatedBudget" | "categoryExists" | "categoryError" | "resetCategoryError">;
-
-export default function BudgetCategoryList(props: BudgetCategoryListProps) {
-	const {categories, removeCategory, unallocatedBudget} = props;
+export default function BudgetCategoryList() {
+	const {categories, unallocatedBudget, removeCategory} = useMonthlyBudgetPlannerContext()
 
 	const categoryRows = [...categories, unallocatedBudget]
 		.map((category) => {
@@ -50,7 +48,7 @@ return (
 		{/* Add Budget category form*/}
 		{
 			unallocatedBudget.amount > 0 &&
-          <NewBudgetCategoryForm {...props}/>
+          <NewBudgetCategoryForm/>
 		}
 
 		{/* Budget category items */}
@@ -62,9 +60,9 @@ return (
 	</div>
 )}
 
-type NewBudgetCategoryFormProps = Pick<BudgetCategoryListProps, "addCategory" | "unallocatedBudget" | "categoryExists" | "resetCategoryError" | "categoryError">
+function NewBudgetCategoryForm() {
+	const {addCategory, categoryError, resetCategoryError, unallocatedBudget, categoryExists} = useMonthlyBudgetPlannerContext()
 
-function NewBudgetCategoryForm(props: NewBudgetCategoryFormProps) {
 	const amountRef = useRef<HTMLInputElement>(null);
 	const handleFocusAmountInput = () => {
 		amountRef.current && amountRef.current.focus();
@@ -78,7 +76,7 @@ function NewBudgetCategoryForm(props: NewBudgetCategoryFormProps) {
 		},
 		onSubmit: ({value}) => {
 			console.log("Submitting new category:", value);
-			const addSuccess = props.addCategory(value.categoryName, Number(value.categoryAmount), value.categoryColor);
+			const addSuccess = addCategory(value.categoryName, Number(value.categoryAmount), value.categoryColor);
 			if (addSuccess) {
 				form.reset();
 				handleFocusAmountInput();
@@ -86,7 +84,7 @@ function NewBudgetCategoryForm(props: NewBudgetCategoryFormProps) {
 		},
 		validators: {
 			onChange: () => {
-				props.resetCategoryError && props.resetCategoryError();
+				resetCategoryError && resetCategoryError();
 			}
 		}
 	})
@@ -112,8 +110,8 @@ function NewBudgetCategoryForm(props: NewBudgetCategoryFormProps) {
 							if (isNaN(amount) || amount <= 0) {
 								return "Amount must be a positive number";
 							}
-							if (props.unallocatedBudget !== undefined && amount > props.unallocatedBudget.amount) {
-								return `Amount must not exceed unallocated amount ($${props.unallocatedBudget.amount.toFixed(2)})`;
+							if (unallocatedBudget !== undefined && amount > unallocatedBudget.amount) {
+								return `Amount must not exceed unallocated amount ($${unallocatedBudget.amount.toFixed(2)})`;
 							}
 						}
 					}}
@@ -146,7 +144,7 @@ function NewBudgetCategoryForm(props: NewBudgetCategoryFormProps) {
 							if (value.length < 1 || value.length > 50) {
 								return "Category name must be between 1 and 50 characters";
 							}
-							if (props.categoryExists(value)) {
+							if (categoryExists(value)) {
 								return "Category name must be unique";
 							}
 						}
@@ -198,8 +196,8 @@ function NewBudgetCategoryForm(props: NewBudgetCategoryFormProps) {
 			</div>
 
 			{
-				props.categoryError && (
-					<small className={cn("text-red-500")}>{props.categoryError}</small>
+				categoryError && (
+					<small className={cn("text-red-500")}>{categoryError}</small>
 				)
 			}
 		</form>

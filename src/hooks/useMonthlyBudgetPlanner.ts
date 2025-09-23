@@ -1,6 +1,6 @@
 import {useMemo, useState} from 'react';
 
-interface MonthlyBudgetPlannerProps {
+export interface MonthlyBudgetPlannerProps {
 	initialBudget?: number;
 }
 
@@ -10,7 +10,6 @@ export interface MonthlyBudgetPlanner {
 	resetBudget: () => void;
 	categories: BudgetCategory[];
 	addCategory: (name: string, amount: number, color: string) => boolean;
-	updateCategory: (name: string, amount: number) => boolean;
 	removeCategory: (name: string) => void;
 	categoryExists: (name: string) => boolean;
 	resetCategories: () => void;
@@ -84,20 +83,6 @@ export default function useMonthlyBudgetPlanner(props: MonthlyBudgetPlannerProps
 		setCategories(prev => [...prev, {id, name, amount, color}]);
 		return true
 	}
-	const updateCategory = (name: string, amount: number): boolean => {
-		if (!isValidCategoryName(name)) {
-			// Category with the same name already exists
-			setCategoryError(`Category with name '${name}' already exists`);
-			return false;
-		}
-		if (!isValidCategoryAmount(amount)) {
-			// Amount exceeds budget
-			setCategoryError('Amount exceeds unallocated budget');
-			return false;
-		}
-		setCategories(prev => prev.map(category => category.name === name ? {...category, amount} : category));
-		return true;
-	}
 	const removeCategory = (name: string) => {
 		setCategories(prev => prev.filter(category => category.name !== name));
 	}
@@ -114,7 +99,6 @@ export default function useMonthlyBudgetPlanner(props: MonthlyBudgetPlannerProps
 		resetBudget,
 		categories,
 		addCategory,
-		updateCategory,
 		removeCategory,
 		categoryExists,
 		resetCategories,

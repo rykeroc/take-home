@@ -3,13 +3,13 @@ import {Pie, PieChart, PieLabel} from 'recharts';
 import * as React from 'react';
 import {cn, formatCurrency} from '@/lib/utils';
 import {NameType, ValueType} from 'recharts/types/component/DefaultTooltipContent';
-import {MonthlyBudgetPlanner} from '@/hooks/useMonthlyBudgetPlanner';
 import {useMemo} from 'react';
+import {useMonthlyBudgetPlannerContext} from '@/app/contexts/MonthlyBudgetPlannerContext';
 
-type BudgetCategoriesBreakdownPieChartProps = Pick<MonthlyBudgetPlanner, "categories" | "unallocatedBudget"> & React.ComponentProps<"div">
+type BudgetCategoriesBreakdownPieChartProps = React.ComponentProps<"div">
 
 export default function BudgetCategoriesBreakdownPieChart(props: BudgetCategoriesBreakdownPieChartProps) {
-	const {categories, unallocatedBudget} = props
+	const {categories, unallocatedBudget} = useMonthlyBudgetPlannerContext()
 
 	const allCategories = useMemo(() => [...categories, unallocatedBudget], [categories, unallocatedBudget]);
 
