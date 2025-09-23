@@ -9,9 +9,9 @@ import {useMonthlyBudgetPlannerContext} from '@/app/contexts/MonthlyBudgetPlanne
 type BudgetCategoriesBreakdownPieChartProps = React.ComponentProps<"div">
 
 export default function BudgetCategoriesBreakdownPieChart(props: BudgetCategoriesBreakdownPieChartProps) {
-	const {categories, unallocatedBudget} = useMonthlyBudgetPlannerContext()
+	const {userDefinedCategories, unallocatedBudget} = useMonthlyBudgetPlannerContext()
 
-	const allCategories = useMemo(() => [...categories, unallocatedBudget], [categories, unallocatedBudget]);
+	const allCategories = useMemo(() => [...userDefinedCategories, unallocatedBudget], [userDefinedCategories, unallocatedBudget]);
 
 	const pieData = allCategories.map(category => ({
 		id: category.id,

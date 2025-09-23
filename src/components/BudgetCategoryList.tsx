@@ -11,9 +11,9 @@ import {Table, TableBody, TableCell, TableRow} from '@/components/ui/table';
 import {useMonthlyBudgetPlannerContext} from '@/app/contexts/MonthlyBudgetPlannerContext';
 
 export default function BudgetCategoryList() {
-	const {categories, unallocatedBudget, removeCategory} = useMonthlyBudgetPlannerContext()
+	const {userDefinedCategories, unallocatedBudget, removeCategory} = useMonthlyBudgetPlannerContext()
 
-	const categoryRows = [...categories, unallocatedBudget]
+	const categoryRows = [...userDefinedCategories, unallocatedBudget]
 		.map((category) => {
 			const isUnallocatedRow = category.id === "unallocated";
 			const mutedStyle = isUnallocatedRow ? "text-muted-foreground" : "";

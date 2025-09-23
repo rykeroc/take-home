@@ -10,6 +10,7 @@ import BudgetCategoryList from '@/components/BudgetCategoryList';
 import {Button} from '@/components/ui/button';
 import BudgetCategoriesBreakdownPieChart from '@/components/BudgetCategoriesBreakdownPieChart';
 import {MonthlyBudgetPlannerProvider, useMonthlyBudgetPlannerContext} from '@/app/contexts/MonthlyBudgetPlannerContext';
+import MonthlyBudgetExportDropdown from '@/components/MonthlyBudgetExportDropdown';
 
 const BudgetPlannerPage = () =>  {
 	const searchParams = useSearchParams();
@@ -47,7 +48,7 @@ const Header = () => {
 }
 
 const InputsCard = () => {
-	const {budget, handleBudgetChange} = useMonthlyBudgetPlannerContext();
+	const {totalBudget, handleBudgetChange} = useMonthlyBudgetPlannerContext();
 	return (
 		<Card>
 			<CardHeader>
@@ -61,11 +62,11 @@ const InputsCard = () => {
 					placeholder={"0"}
 					label={"Monthly Budget"}
 					prefix={"$"}
-					value={budget === 0 ? "" : budget}
+					value={totalBudget === 0 ? "" : totalBudget}
 					onChange={(e) => handleBudgetChange(e.target.value)}/>
 
 				{
-					budget !== 0 && (
+					totalBudget !== 0 && (
 						<>
 							<Separator/>
 
@@ -79,20 +80,20 @@ const InputsCard = () => {
 }
 
 const Summary = () => {
-	const {categories} = useMonthlyBudgetPlannerContext();
+	const {userDefinedCategories} = useMonthlyBudgetPlannerContext();
 
 	// Don't show summary if no categories
-	if (categories.length === 0) return null
+	if (userDefinedCategories.length === 0) return null
 
 	return (
 		<Card>
-			<CardHeader>
+			<CardHeader className={cn("flex", "justify-between")}>
 				<CardTitle>Summary</CardTitle>
+
+				<MonthlyBudgetExportDropdown/>
 			</CardHeader>
 			<CardContent>
 				<BudgetCategoriesBreakdownPieChart/>
-
-				{/* TODO Add Export to csv */}
 			</CardContent>
 		</Card>
 	)

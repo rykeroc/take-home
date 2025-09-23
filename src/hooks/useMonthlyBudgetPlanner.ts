@@ -5,26 +5,25 @@ export interface MonthlyBudgetPlannerProps {
 }
 
 export interface MonthlyBudgetPlanner {
-	budget: number;
+	totalBudget: number;
 	handleBudgetChange: (value: string) => void;
 	resetBudget: () => void;
-	categories: BudgetCategory[];
+	userDefinedCategories: BudgetCategory[];
+	unallocatedBudget: BudgetCategory;
 	addCategory: (name: string, amount: number, color: string) => boolean;
 	removeCategory: (name: string) => void;
 	categoryExists: (name: string) => boolean;
 	resetCategories: () => void;
-	unallocatedBudget: BudgetCategory;
 	categoryError: string | null;
 	resetCategoryError: () => void;
 }
 
-export type UnallocatedId = "unallocated";
-
-export type BudgetCategoryIdType = string | UnallocatedId;
+export type BudgetCategoryIdType = string | "unallocated" | "total";
+export type BudgetCategoryNameType = string | "Unallocated" | "Total";
 
 export interface BudgetCategory {
 	id: BudgetCategoryIdType
-	name: string;
+	name: BudgetCategoryNameType;
 	amount: number;
 	color: string;
 }
@@ -94,10 +93,10 @@ export default function useMonthlyBudgetPlanner(props: MonthlyBudgetPlannerProps
 	}
 
 	return {
-		budget,
+		totalBudget: budget,
 		handleBudgetChange,
 		resetBudget,
-		categories,
+		userDefinedCategories: categories,
 		addCategory,
 		removeCategory,
 		categoryExists,
