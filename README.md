@@ -1,8 +1,8 @@
-# Canadian Finance Helper
+# Canadian Take Home
 
 ## Overview
 
-The Canadian Finance Helper is a comprehensive web application designed to assist Canadians in managing their personal
+The Canadian Take Home is a comprehensive web application designed to assist Canadians in managing their personal
 finances. Built with React and TypeScript, this modern tool provides essential financial planning capabilities tailored
 specifically for the Canadian tax system and financial landscape. Whether you're planning your annual budget,
 calculating tax obligations, or analyzing your financial position across different provinces, this application offers
@@ -46,7 +46,7 @@ be easily integrated into your broader financial management workflow.
 
 ### Running the Application Locally
 
-To set up the development environment for the Canadian Finance Helper application, follow these steps:
+To set up the development environment for the Canadian Take Home application, follow these steps:
 
 1. **Clone the Repository**: Start by cloning the repository to your local machine using Git.
 

@@ -9,7 +9,7 @@ export default function  Footer() {
 			<Separator/>
 			<div className={cn("w-full", "py-4", "flex", "justify-center", "text-sm", "text-muted-foreground")}>
 				<p>
-					&copy; {currentYear} Finance Helper. All rights reserved.
+					&copy; {currentYear} Take Home. All rights reserved.
 				</p>
 			</div>
 		</footer>

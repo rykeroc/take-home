@@ -121,7 +121,7 @@ export default function Home() {
 			</section>
 
 			<section className={cn("flex", "flex-col", "gap-10", "items-center",)}>
-				<h3>Why use Finance Helper?</h3>
+				<h3>Why use Take Home?</h3>
 				<div className={cn("flex", "flex-col", "gap-5", "md:flex-row")}>
 					{FooterDescriptors}
 				</div>

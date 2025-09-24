@@ -26,7 +26,7 @@ interface LinkData extends React.ComponentProps<
 }
 
 const HeaderNavigation = () => {
-	const appName = "Finance Helper"
+	const appName = "Take Home"
 
 	const iconClasses = cn("!h-6", "!w-6", "text-primary");
 
