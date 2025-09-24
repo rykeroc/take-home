@@ -1,7 +1,7 @@
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from '@/components/ui/table';
 import {cn, formatCurrency} from '@/lib/utils';
 import React from 'react';
-import {useIncomeCalculatorContext} from '@/app/contexts/IncomeCalculatorContext';
+import {useIncomeCalculatorContext} from '@/contexts/IncomeCalculatorContext';
 
 export default function IncomeDeductionTable() {
 	const {

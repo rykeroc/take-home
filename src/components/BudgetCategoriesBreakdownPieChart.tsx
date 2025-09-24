@@ -4,7 +4,7 @@ import * as React from 'react';
 import {cn, formatCurrency} from '@/lib/utils';
 import {NameType, ValueType} from 'recharts/types/component/DefaultTooltipContent';
 import {useMemo} from 'react';
-import {useMonthlyBudgetPlannerContext} from '@/app/contexts/MonthlyBudgetPlannerContext';
+import {useMonthlyBudgetPlannerContext} from '@/contexts/MonthlyBudgetPlannerContext';
 
 type BudgetCategoriesBreakdownPieChartProps = React.ComponentProps<"div">
 

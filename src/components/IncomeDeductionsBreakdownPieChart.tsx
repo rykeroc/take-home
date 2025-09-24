@@ -3,7 +3,7 @@ import {Pie, PieChart, PieLabel} from 'recharts';
 import * as React from 'react';
 import {cn, formatCurrency} from '@/lib/utils';
 import {NameType, ValueType} from 'recharts/types/component/DefaultTooltipContent';
-import {useIncomeCalculatorContext} from '@/app/contexts/IncomeCalculatorContext';
+import {useIncomeCalculatorContext} from '@/contexts/IncomeCalculatorContext';
 import {useMemo} from 'react';
 
 type IncomeDeductionsBreakdownPieChartProps = React.ComponentProps<"div">

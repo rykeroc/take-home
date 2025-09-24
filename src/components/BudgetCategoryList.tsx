@@ -8,7 +8,7 @@ import {Label} from '@/components/ui/label';
 import {AnyFieldApi, useForm} from '@tanstack/react-form';
 import {FormEvent, useRef} from 'react';
 import {Table, TableBody, TableCell, TableRow} from '@/components/ui/table';
-import {useMonthlyBudgetPlannerContext} from '@/app/contexts/MonthlyBudgetPlannerContext';
+import {useMonthlyBudgetPlannerContext} from '@/contexts/MonthlyBudgetPlannerContext';
 
 export default function BudgetCategoryList() {
 	const {userDefinedCategories, unallocatedBudget, removeCategory} = useMonthlyBudgetPlannerContext()

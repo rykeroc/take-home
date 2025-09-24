@@ -1,7 +1,7 @@
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from '@/components/ui/dropdown-menu';
 import {Button} from '@/components/ui/button';
 import {Share} from 'lucide-react';
-import {useMonthlyBudgetPlannerContext} from '@/app/contexts/MonthlyBudgetPlannerContext';
+import {useMonthlyBudgetPlannerContext} from '@/contexts/MonthlyBudgetPlannerContext';
 import {toast} from 'sonner';
 import Papa from 'papaparse';
 import {useMemo} from 'react';
