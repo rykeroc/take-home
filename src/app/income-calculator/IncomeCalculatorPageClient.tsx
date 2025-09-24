@@ -94,7 +94,7 @@ const InputsCard = () => {
 						value={grossIncomeType}
 						onValueChange={(e) => handleInputGrossIncomeTypeChange(e as GrossIncomeType)}
 					>
-						<SelectTrigger className={cn("w-1/2")}>
+						<SelectTrigger className={cn("w-full", "sm:w-1/2")}>
 							<SelectValue placeholder="Select income type"/>
 						</SelectTrigger>
 						<SelectContent>
@@ -128,7 +128,7 @@ const InputsCard = () => {
 				<Separator/>
 
 
-				<div className={cn("flex", "gap-3", "items-end")}>
+				<div className={cn("flex", "flex-col", "sm:flex-row", "gap-3", "items-end")}>
 					{/* Province or Territory selection */}
 					<Select
 						label={"Province / Territory"}

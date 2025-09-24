@@ -69,7 +69,7 @@ export default function BudgetCategoriesBreakdownPieChart(props: BudgetCategorie
 		<ChartContainer config={chartConfig} className={props.className}>
 			<PieChart>
 				<ChartTooltip content={<ChartTooltipContent formatter={formatter} hideLabel/>} />
-				<Pie data={pieData} nameKey={"id"} dataKey={"value"} label={pieLabelFormatter} innerRadius={60}/>
+				<Pie data={pieData} nameKey={"id"} dataKey={"value"} label={pieLabelFormatter}/>
 			</PieChart>
 		</ChartContainer>
 	)

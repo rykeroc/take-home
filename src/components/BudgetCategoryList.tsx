@@ -43,27 +43,34 @@ export default function BudgetCategoryList() {
 			)
 		});
 
-return (
-	<div className={cn("flex", "flex-col", "gap-4")}>
-		<Label className={cn("text-muted-foreground")}>Budget Categories</Label>
+	return (
+		<div className={cn("flex", "flex-col", "gap-4")}>
+			<Label className={cn("text-muted-foreground")}>Budget Categories</Label>
 
-		{/* Add Budget category form*/}
-		{
-			unallocatedBudget.amount > 0 &&
-          <NewBudgetCategoryForm/>
-		}
+			{/* Add Budget category form*/}
+			{
+				unallocatedBudget.amount > 0 &&
+              <NewBudgetCategoryForm/>
+			}
 
-		{/* Budget category items */}
-		<Table>
-			<TableBody>
-				{categoryRows}
-			</TableBody>
-		</Table>
-	</div>
-)}
+			{/* Budget category items */}
+			<Table>
+				<TableBody>
+					{categoryRows}
+				</TableBody>
+			</Table>
+		</div>
+	)
+}
 
 function NewBudgetCategoryForm() {
-	const {addCategory, categoryError, resetCategoryError, unallocatedBudget, categoryExists} = useMonthlyBudgetPlannerContext()
+	const {
+		addCategory,
+		categoryError,
+		resetCategoryError,
+		unallocatedBudget,
+		categoryExists
+	} = useMonthlyBudgetPlannerContext()
 
 	const amountRef = useRef<HTMLInputElement>(null);
 	const handleFocusAmountInput = () => {
@@ -97,102 +104,108 @@ function NewBudgetCategoryForm() {
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<div className={cn("flex", "flex-row", "gap-3", "items-start")}>
-				{/* Category Amount */}
-				<form.Field
-					name={"categoryAmount"}
-					validators={{
-						onChange: ({value}) => {
-							if (value === '') {
-								return "Amount is required";
+			<div className={cn("flex", "flex-col", "sm:flex-row", "gap-3", "items-start")}>
+				<div className={cn("flex", "gap-3", "w-full")}>
+					{/* Category Amount */}
+					<form.Field
+						name={"categoryAmount"}
+						validators={{
+							onChange: ({value}) => {
+								if (value === '') {
+									return "Amount is required";
+								}
+								const amount = parseFloat(value);
+								if (isNaN(amount) || amount <= 0) {
+									return "Amount must be a positive number";
+								}
+								if (unallocatedBudget !== undefined && amount > unallocatedBudget.amount) {
+									return `Amount must not exceed unallocated amount ($${unallocatedBudget.amount.toFixed(2)})`;
+								}
 							}
-							const amount = parseFloat(value);
-							if (isNaN(amount) || amount <= 0) {
-								return "Amount must be a positive number";
+						}}
+						children={(field) => (
+							<div
+								className={cn("flex", "flex-col", "gap-1", "w-full",)}>
+								<Input
+									ref={amountRef}
+									id={field.name}
+									name={field.name}
+									onBlur={field.handleBlur}
+									value={field.state.value}
+									onChange={(e) => field.handleChange(e.target.value)}
+									type={"number"}
+									placeholder={"0"}
+									prefix={"$"}
+								/>
+								<FieldError field={field}/>
+							</div>
+						)}
+					/>
+
+					{/* Category Name */}
+					<form.Field
+						name={"categoryName"}
+						validators={{
+							onChange: ({value}) => {
+								if (value.trim() === '') {
+									return "Category name is required";
+								}
+								if (value.length < 1 || value.length > 50) {
+									return "Category name must be between 1 and 50 characters";
+								}
+								if (categoryExists(value)) {
+									return "Category name must be unique";
+								}
 							}
-							if (unallocatedBudget !== undefined && amount > unallocatedBudget.amount) {
-								return `Amount must not exceed unallocated amount ($${unallocatedBudget.amount.toFixed(2)})`;
-							}
-						}
-					}}
-					children={(field) => (
-						<div className={cn("flex", "flex-col", "gap-1", "w-full", "md:w-1/2", "lg:w-1/3", "xl:w-1/4")}>
+						}}
+						children={(field) => (
+							<div
+								className={cn("flex", "flex-col", "gap-1", "w-full")}>
+								<Input
+									id={field.name}
+									name={field.name}
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+									type={"text"}
+									placeholder={"Category name"}
+								/>
+								<FieldError field={field}/>
+							</div>
+						)}
+					/>
+				</div>
+
+				<div className={cn("flex", "gap-3", "w-full")}>
+
+					{/* Color */}
+					<form.Field
+						name={"categoryColor"}
+						children={(field) => (
 							<Input
-								ref={amountRef}
 								id={field.name}
 								name={field.name}
-								onBlur={field.handleBlur}
-								value={field.state.value}
-								onChange={(e) => field.handleChange(e.target.value)}
-								type={"number"}
-								placeholder={"0"}
-								prefix={"$"}
-							/>
-							<FieldError field={field}/>
-						</div>
-					)}
-				/>
-
-				{/* Category Name */}
-				<form.Field
-					name={"categoryName"}
-					validators={{
-						onChange: ({value}) => {
-							if (value.trim() === '') {
-								return "Category name is required";
-							}
-							if (value.length < 1 || value.length > 50) {
-								return "Category name must be between 1 and 50 characters";
-							}
-							if (categoryExists(value)) {
-								return "Category name must be unique";
-							}
-						}
-					}}
-					children={(field) => (
-						<div className={cn("flex", "flex-col", "gap-1", "w-full", "md:w-1/2", "lg:w-1/3", "xl:w-1/4")}>
-							<Input
-								id={field.name}
-								name={field.name}
 								value={field.state.value}
 								onBlur={field.handleBlur}
 								onChange={(e) => field.handleChange(e.target.value)}
-								type={"text"}
-								placeholder={"Enter category name"}
+								type={"color"}
+								className={cn(
+									"w-18", // make it square, remove padding/border
+									"cursor-pointer appearance-none" // remove default browser styles
+								)}
 							/>
-							<FieldError field={field}/>
-						</div>
-					)}
-				/>
-
-				{/* Color */}
-				<form.Field
-					name={"categoryColor"}
-					children={(field) => (
-						<Input
-							id={field.name}
-							name={field.name}
-							value={field.state.value}
-							onBlur={field.handleBlur}
-							onChange={(e) => field.handleChange(e.target.value)}
-							type={"color"}
-							className={cn(
-								"w-18", // make it square, remove padding/border
-								"cursor-pointer appearance-none" // remove default browser styles
-							)}
-						/>
-					)}
-				/>
-
-				{/* Submit Button */}
-				<form.Subscribe
-					selector={(state) => [state.canSubmit]}
-					children={([canSubmit]) => (
-						<Button type="submit" disabled={!canSubmit}>
-							<Plus/>
-						</Button>
-					)}
-				/>
+						)}
+					/>
+					{/* Submit Button */}
+					<form.Subscribe
+						selector={(state) => [state.canSubmit]}
+						children={([canSubmit]) => (
+							<Button type="submit" disabled={!canSubmit}>
+								<Plus/>
+							</Button>
+						)}
+					/>
+				</div>
 			</div>
 
 			{

@@ -92,7 +92,7 @@ export default function IncomeDeductionsBreakdownPieChart(props: IncomeDeduction
 		<ChartContainer config={chartConfig} className={props.className}>
 			<PieChart>
 				<ChartTooltip content={<ChartTooltipContent formatter={formatter} hideLabel/>} />
-				<Pie data={pieData} nameKey={"name"} dataKey={"value"} label={pieLabelFormatter} innerRadius={60}/>
+				<Pie data={pieData} nameKey={"name"} dataKey={"value"} label={pieLabelFormatter}/>
 			</PieChart>
 		</ChartContainer>
 	)
