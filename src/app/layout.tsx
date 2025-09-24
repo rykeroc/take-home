@@ -5,6 +5,7 @@ import React from 'react';
 import NavigationMenu from '@/components/NavigationMenu';
 import {cn} from '@/lib/utils';
 import {Toaster} from '@/components/ui/sonner';
+import Footer from '@/components/Footer';
 
 const montserrat = Montserrat({
 	variable: "--font-montserrat",
@@ -25,6 +26,7 @@ export default function RootLayout({
 		[
 			"flex",
 			"flex-col",
+			"flex-1",
 			"items-center",
 			"p-4",
 			"w-full",
@@ -37,14 +39,15 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 		<body
-			className={`${montserrat.variable} antialiased`}
+			className={cn(montserrat.variable, "antialiased", "min-h-screen", "flex", "flex-col")}
 		>
 		<NavigationMenu className={"mb-4"}/>
-		<main className={cn("flex", "justify-center", "w-full")}>
+		<main className={cn("flex", "flex-col", "items-center", "w-full", "flex-1")}>
 			<div className={layoutClasses}>
 				{children}
 			</div>
 		</main>
+		<Footer/>
 		<Toaster position={"top-center"}/>
 		</body>
 		</html>

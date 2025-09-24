@@ -85,7 +85,7 @@ const NavigationMenu = (props: NavigationMenuProps) => {
 			className={cn([props.className, "flex", "flex-row", "w-full", "items-center", "justify-between", "border-b-2", "p-4", "border-gray-200",])}>
 			<div className={cn(["flex", "flex-row", "w-full", "items-center", "justify-between", "gap-4"])}>
 				<Link href={"/"}>
-					<h1>{appName}</h1>
+					<h4>{appName}</h4>
 				</Link>
 
 				{/* Large screen navigation */}

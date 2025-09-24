@@ -237,9 +237,6 @@ const AnnualDeductionsCard = () => {
 					<AnnualDeductionsBreakdownPieChart className={cn("xl:w-1/3", "lg:w-1/2")}/>
 				</div>
 			</CardContent>
-			<CardFooter>
-				<small className={"text-red-400"}>*These results may not be 100% accurate and should be used as approximations</small>
-			</CardFooter>
 		</Card>
 	)
 }
