@@ -1,24 +1,23 @@
 "use client";
 
 import {
-	NavigationMenu as ShadcnNavigationMenu,
+	NavigationMenu,
+	NavigationMenu as ShadcnNavigationMenu, NavigationMenuItem,
 	NavigationMenuLink,
 	NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import * as React from "react";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import Link from 'next/link';
-import {List, Menu, Users} from 'lucide-react';
+import {Calculator, List, Menu, PiggyBank, Users} from 'lucide-react';
 import {
 	Sheet as ShadcnSheet,
 	SheetContent,
-	SheetHeader,
-	SheetTitle,
+	SheetHeader, SheetTitle,
 	SheetTrigger
 } from '@/components/ui/sheet';
 import {Separator} from '@/components/ui/separator';
 import {cn} from '@/lib/utils';
-import {ClassProp} from 'class-variance-authority/types';
 
 interface LinkData extends React.ComponentProps<
 	typeof NavigationMenuPrimitive.Link
@@ -26,23 +25,21 @@ interface LinkData extends React.ComponentProps<
 	icon: React.ReactNode
 }
 
-type NavigationMenuProps = ClassProp
-
-const NavigationMenu = (props: NavigationMenuProps) => {
+const HeaderNavigation = () => {
 	const appName = "Finance Helper"
 
-	const iconSizes = cn(["!h-6", "!w-6"])
+	const iconClasses = cn("!h-6", "!w-6", "text-primary");
 
 	const navigationLinkData: LinkData[] = [
 		{
 			href: "/income-calculator",
 			children: "Income Calculator",
-			icon: <List className={iconSizes}/>
+			icon: <Calculator className={iconClasses}/>
 		},
 		{
 			href: "/budget-planner",
 			children: "Budget Planner",
-			icon: <Users className={iconSizes}/>
+			icon: <PiggyBank className={iconClasses}/>
 		}
 	];
 
@@ -56,11 +53,17 @@ const NavigationMenu = (props: NavigationMenuProps) => {
 
 	const smNavigationLinks = navigationLinkData.map(
 		(destination) => (
-			<NavigationMenuLink key={destination.href} href={destination.href}
-			                    className={cn(["flex", "flex-row", "items-center", "gap-2"])}>
-				{destination.icon}
-				<h4>{destination.children}</h4>
-			</NavigationMenuLink>
+			<NavigationMenuItem
+				key={destination.href}>
+				<NavigationMenuLink
+					href={destination.href!}
+					className={cn("flex", "flex-row", "items-center", "gap-3", "w-full")}>
+					<div className={cn("bg-primary/15", "rounded-lg", "p-3")}>
+						{destination.icon}
+					</div>
+					{destination.children}
+				</NavigationMenuLink>
+			</NavigationMenuItem>
 		),
 	);
 
@@ -82,7 +85,7 @@ const NavigationMenu = (props: NavigationMenuProps) => {
 
 	return (
 		<nav
-			className={cn([props.className, "flex", "flex-row", "w-full", "items-center", "justify-between", "border-b-2", "p-4", "border-gray-200",])}>
+			className={cn("flex", "flex-row", "w-full", "items-center", "justify-between", "border-b-2", "p-4", "border-gray-200", "mb-10")}>
 			<div className={cn(["flex", "flex-row", "w-full", "items-center", "justify-between", "gap-4"])}>
 				<Link href={"/"}>
 					<h4>{appName}</h4>
@@ -101,22 +104,25 @@ const NavigationMenu = (props: NavigationMenuProps) => {
 				<SheetTrigger className={smScreenClassName}>
 					<Menu/>
 				</SheetTrigger>
-				<SheetContent className={cn(["w-full", "gap-0"])}>
-					<SheetHeader>
-						<SheetTitle asChild>
-							<h1>Wishes</h1>
+				<SheetContent className={cn("w-full", "gap-0")}>
+					<SheetHeader className={"gap-2"}>
+						<SheetTitle className={"font-normal"} asChild>
+							<h4>{appName}</h4>
 						</SheetTitle>
-						<Separator/>
 					</SheetHeader>
-					<ShadcnNavigationMenu className={cn(["items-start"])}>
-						<NavigationMenuList className={cn(["flex", "flex-col", "items-start", "gap-4", "ps-2"])}>
-							{smNavigationLinks}
-						</NavigationMenuList>
-					</ShadcnNavigationMenu>
+					<div className={cn("flex", "flex-col", "w-full",)}>
+						<Separator/>
+
+						<NavigationMenu orientation={"vertical"}>
+							<NavigationMenuList className={cn("flex-col", "items-start", "p-2")}>
+								{smNavigationLinks}
+							</NavigationMenuList>
+						</NavigationMenu>
+					</div>
 				</SheetContent>
 			</ShadcnSheet>
 		</nav>
 	);
 };
 
-export default NavigationMenu;
+export default HeaderNavigation;

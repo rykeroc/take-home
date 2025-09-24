@@ -109,22 +109,20 @@ export default function Home() {
 
 	return (
 		<div className={cn("flex", "flex-col", "gap-20")}>
-			<section className={cn("flex", "flex-col", "gap-4", "items-center", "w-full")}>
-				<h1>
-					Plan your <span className={"text-primary"}>Financial Future</span>
-				</h1>
+			<section className={cn("flex", "flex-col", "gap-5", "items-center", "w-full")}>
+				<h1 className={"text-center"}>Plan your <span className={cn("text-primary")}>Financial Future</span></h1>
 				<h5 className={cn("text-muted-foreground", "text-center")}>
 					Simple, powerful tools to calculate your income and plan your budget effectively.
 				</h5>
 			</section>
 
-			<section className={cn("flex", "gap-4",)}>
+			<section className={cn("flex", "flex-col", "gap-5", "md:flex-row")}>
 				{FeatureCards}
 			</section>
 
-			<section className={cn("flex", "flex-col", "gap-10", "items-center", "w-full")}>
+			<section className={cn("flex", "flex-col", "gap-10", "items-center",)}>
 				<h3>Why use Finance Helper?</h3>
-				<div className={cn("flex", "gap-4")}>
+				<div className={cn("flex", "flex-col", "gap-5", "md:flex-row")}>
 					{FooterDescriptors}
 				</div>
 			</section>

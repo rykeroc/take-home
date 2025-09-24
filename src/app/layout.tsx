@@ -2,7 +2,7 @@ import type {Metadata} from "next";
 import {Montserrat} from "next/font/google";
 import "./globals.css";
 import React from 'react';
-import NavigationMenu from '@/components/NavigationMenu';
+import HeaderNavigation from '@/components/HeaderNavigation';
 import {cn} from '@/lib/utils';
 import {Toaster} from '@/components/ui/sonner';
 import Footer from '@/components/Footer';
@@ -41,7 +41,7 @@ export default function RootLayout({
 		<body
 			className={cn(montserrat.variable, "antialiased", "min-h-screen", "flex", "flex-col")}
 		>
-		<NavigationMenu className={"mb-4"}/>
+		<HeaderNavigation/>
 		<main className={cn("flex", "flex-col", "items-center", "w-full", "flex-1")}>
 			<div className={layoutClasses}>
 				{children}
