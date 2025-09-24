@@ -9,7 +9,7 @@ import {
 import * as React from "react";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import Link from 'next/link';
-import {Calculator, List, Menu, PiggyBank, Users} from 'lucide-react';
+import {Calculator, Menu, PiggyBank} from 'lucide-react';
 import {
 	Sheet as ShadcnSheet,
 	SheetContent,

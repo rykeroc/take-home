@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Canadian Take Home is a comprehensive web application designed to assist Canadians in managing their personal
+Take Home is a comprehensive web application designed to assist Canadians in managing their personal
 finances. Built with React and TypeScript, this modern tool provides essential financial planning capabilities tailored
 specifically for the Canadian tax system and financial landscape. Whether you're planning your annual budget,
 calculating tax obligations, or analyzing your financial position across different provinces, this application offers
