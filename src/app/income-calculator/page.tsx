@@ -17,8 +17,7 @@ export const metadata: Metadata = {
 		title: "Income Calculator – Take Home",
 		description:
 			"Calculate your net income after Canadian taxes and deductions, with detailed breakdowns for provinces and tax years.",
-		// TODO: Update with production URL
-		url: "https://yourdomain.com/income-calculator",
+		url: "https://take-home-gray.vercel.app/income-calculator",
 		siteName: "Take Home",
 		images: [
 			{

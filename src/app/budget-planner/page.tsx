@@ -8,8 +8,7 @@ export const metadata: Metadata = {
 	openGraph: {
 		title: "Budget Planner",
 		description: "Plan your budget effectively with our comprehensive budget planner tool. Track your income, expenses, and savings to achieve your financial goals.",
-		// TODO: Replace with production URL
-		url: "https://takehome.vercel.app/budget-planner",
+		url: "https://take-home-gray.vercel.app//budget-planner",
 		siteName: "Take Home",
 		images: [
 			{

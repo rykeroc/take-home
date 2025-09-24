@@ -13,8 +13,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-	// TODO: Update with actual url after deployment
-	metadataBase: new URL("https://takehome.vercel.app"),
+	metadataBase: new URL("https://take-home-gray.vercel.app/"),
 	title: "Take Home – Plan Your Financial Future",
 	description: "Calculate your take-home pay after Canadian tax deductions and create a budget with ease. Take Home helps you plan your financial future with accurate income calculations and powerful budgeting tools.",
 	applicationName: "Take Home",
