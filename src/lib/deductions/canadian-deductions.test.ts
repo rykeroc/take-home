@@ -2,11 +2,10 @@ import { describe, expect, it } from '@jest/globals';
 import {
 	calculateFederalTax,
 	calculateProvincialTax,
-	calculateCanadianTaxes,
-	TaxYear,
-	TaxCalculationResult,
-} from '@/lib/deductions/canadian-tax-calculator';
+	calculatePayrollDeductions, PayrollDeductionsResult,
+} from '@/lib/deductions/canadian-deductions';
 import { CanadianProvinceOrTerritoryCode } from '@/lib/canadian-provinces';
+import { TaxYear } from '@/lib/deductions/canadian-deductions.types';
 
 type ProvincialInput = {
 	income: number;
@@ -36,7 +35,7 @@ describe('CanadianTaxCalculator', () => {
 
 		it('should calculate federal tax for income of 200000 in 2025', () => {
 			const input = { income: 200000, year: 2025 } as FederalInput;
-			const expected = 39090.625; // 15% on the first $53,359, 20.5% on the next $53,359, 26% on the next $58,713 and 29% on the remaining $34,569
+			const expected = 42909.79; // 15% on the first $53,359, 20.5% on the next $53,359, 26% on the next $58,713 and 29% on the remaining $34,569
 			const result = calculateFederalTax(input.income, input.year);
 			expect(result).toBe(expected);
 		});
@@ -85,11 +84,16 @@ describe('CanadianTaxCalculator', () => {
 				year: 2025,
 			} as TotalInput;
 			const expected = {
+				"cppContribution": 0,
+				"eiPremium": 0,
+				"qpipPremium": 0,
+				"totalContributions": 0,
+				"totalDeductions": 0,
 				totalFederalTax: 0,
 				totalProvincialTax: 0,
 				totalTax: 0,
-			} as TaxCalculationResult;
-			const result = calculateCanadianTaxes(input.income, input.provinceCode, input.year);
+			} as PayrollDeductionsResult;
+			const result = calculatePayrollDeductions(input.income, input.provinceCode, input.year);
 			expect(result).toEqual(expected);
 		});
 
@@ -100,11 +104,16 @@ describe('CanadianTaxCalculator', () => {
 				year: 2025,
 			} as TotalInput;
 			const expected = {
+				cppContribution: 981.75,
+				eiPremium: 328,
+				qpipPremium: 0,
+				totalContributions: 1309.75,
+				totalDeductions: 5809.75,
 				totalFederalTax: 2900,
 				totalProvincialTax: 1600,
 				totalTax: 4500,
-			} as TaxCalculationResult;
-			const result = calculateCanadianTaxes(input.income, input.provinceCode, input.year);
+			} as PayrollDeductionsResult;
+			const result = calculatePayrollDeductions(input.income, input.provinceCode, input.year);
 			expect(result).toEqual(expected);
 		});
 
@@ -115,11 +124,16 @@ describe('CanadianTaxCalculator', () => {
 				year: 2025,
 			} as TotalInput;
 			const expected = {
+				cppContribution: 3361.75,
+				eiPremium: 984.0000000000001,
+				qpipPremium: 0,
+				totalContributions: 4345.75,
+				totalDeductions: 16524.924,
 				totalFederalTax: 8857.5,
 				totalProvincialTax: 3321.6740000000004,
 				totalTax: 12179.174000000001,
-			} as TaxCalculationResult;
-			const result = calculateCanadianTaxes(input.income, input.provinceCode, input.year);
+			} as PayrollDeductionsResult;
+			const result = calculatePayrollDeductions(input.income, input.provinceCode, input.year);
 			expect(result).toEqual(expected);
 		});
 	});
