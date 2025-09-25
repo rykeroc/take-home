@@ -3,11 +3,12 @@
  * https://jestjs.io/docs/configuration
  */
 
-const { compilerOptions } = require('./tsconfig.json');
-const { pathsToModuleNameMapper } = require('ts-jest');
+import { compilerOptions } from './tsconfig.json';
+import { pathsToModuleNameMapper } from 'ts-jest';
+import { Config } from 'jest';
 
 /** @type {import('jest').Config} */
-const config = {
+const config: Config = {
 	// All imported modules in your tests should be mocked automatically
 	// automock: false,
 
@@ -202,4 +203,4 @@ const config = {
 	// watchman: true,
 };
 
-module.exports = config;
+export default config;
