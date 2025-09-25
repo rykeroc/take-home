@@ -50,10 +50,10 @@ To set up the development environment for the Canadian Take Home application, fo
 
 1. **Clone the Repository**: Start by cloning the repository to your local machine using Git.
 
-   ```bash
-   git clone <repository-url>
-   cd <repository-directory>
-   ```
+    ```bash
+    git clone <repository-url>
+    cd <repository-directory>
+    ```
 
 2. **Install Dependencies**: Use the package manager of your choice to install the necessary dependencies for the
    project.
@@ -82,7 +82,7 @@ Linting can be performed using:
 
 ```bash
 pnpm run lint
-````
+```
 
 ### Building for Production
 
@@ -95,7 +95,7 @@ pnpm run build
 ## References
 
 | Name                                   | URL                                                                                                                                                                                       |
-|----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Canadian Province and Territory Codes  | https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/completing-slips-summaries/financial-slips-summaries/return-investment-income-t5/provincial-territorial-codes.html |
 | Canadian Tax Rates and Income brackets | https://www.canada.ca/en/revenue-agency/services/tax/individuals/frequently-asked-questions-individuals/canadian-income-tax-rates-individuals-current-previous-years.html                 |
 | Canada CPP 2025                        | https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/canada-pension-plan-cpp/cpp-contribution-rates-maximums-exemptions.html   |

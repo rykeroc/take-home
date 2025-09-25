@@ -1,13 +1,11 @@
-import {Spinner} from '@/components/ui/shadcn-io/spinner';
-import {cn} from '@/lib/utils';
+import { Spinner } from '@/components/ui/shadcn-io/spinner';
+import { cn } from '@/lib/utils';
 
 export default function Loading() {
 	return (
-		<div className={cn("flex", "flex-col", "items-center", "justify-center", "gap-3")}>
-			<Spinner/>
-			<h4 className={"text-muted-foreground"}>
-				Loading
-			</h4>
+		<div className={cn('flex', 'flex-col', 'items-center', 'justify-center', 'gap-3')}>
+			<Spinner />
+			<h4 className={'text-muted-foreground'}>Loading</h4>
 		</div>
-	)
+	);
 }

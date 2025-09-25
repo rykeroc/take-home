@@ -1,21 +1,19 @@
-"use client"
+'use client';
 
-import {cn} from '@/lib/utils';
-import {Button} from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export default function GlobalError() {
 	return (
-		<div>
-			<div className={cn("mb-4", "text-start", "flex", "flex-col", "gap-2")}>
+		<section>
+			<div className={cn('mb-4', 'text-start', 'flex', 'flex-col', 'gap-2')}>
 				<h1>Something Went Wrong</h1>
 				<p>Sorry, an unexpected error has occurred. Please try again later.</p>
 			</div>
 			<Button asChild>
-				<Link href={"/"}>
-					Return Home
-				</Link>
+				<Link href={'/'}>Return Home</Link>
 			</Button>
-		</div>
-	)
+		</section>
+	);
 }

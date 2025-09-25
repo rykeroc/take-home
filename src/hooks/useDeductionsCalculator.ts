@@ -1,7 +1,10 @@
-import {CanadianProvinceOrTerritoryCode} from '@/lib/canadian-provinces';
-import React, {useEffect, useMemo} from 'react';
-import {TaxYear} from '@/lib/deductions/canadian-deductions.types';
-import {calculatePayrollDeductions, PayrollDeductionsResult} from '@/lib/deductions/canadian-deductions';
+import { CanadianProvinceOrTerritoryCode } from '@/lib/canadian-provinces';
+import React, { useEffect, useMemo } from 'react';
+import { TaxYear } from '@/lib/deductions/canadian-deductions.types';
+import {
+	calculatePayrollDeductions,
+	PayrollDeductionsResult,
+} from '@/lib/deductions/canadian-deductions';
 
 export interface DeductionsCalculator extends PayrollDeductionsResult {
 	isCompleted: boolean;
@@ -16,61 +19,70 @@ export interface DeductionsCalculator extends PayrollDeductionsResult {
 }
 
 interface DeductionsCalculatorParams {
-	grossAnnualIncome: number
-	provinceCode: CanadianProvinceOrTerritoryCode | null
-	year: TaxYear | null
+	grossAnnualIncome: number;
+	provinceCode: CanadianProvinceOrTerritoryCode | null;
+	year: TaxYear | null;
 }
 
 export function useDeductionsCalculator(): DeductionsCalculator {
-	const defaultParams: DeductionsCalculatorParams =  useMemo(() => {
+	const defaultParams: DeductionsCalculatorParams = useMemo(() => {
 		return {
 			grossAnnualIncome: 0,
 			provinceCode: null,
 			year: null,
-		}
-	}, [])
+		};
+	}, []);
 	const [params, setParams] = React.useState<DeductionsCalculatorParams>(defaultParams);
 	const handleGrossAnnualIncomeChange = React.useCallback((value: string | undefined) => {
 		const parsedValue = value ? parseFloat(value) : 0;
-		setParams(prev => ({...prev, grossAnnualIncome: parsedValue}));
-	}, [])
+		setParams(prev => ({ ...prev, grossAnnualIncome: parsedValue }));
+	}, []);
 	const handleProvinceCodeChange = React.useCallback((value: string | undefined) => {
-		setParams(prev => ({...prev, provinceCode: value as CanadianProvinceOrTerritoryCode ?? null}));
-		}, [])
+		setParams(prev => ({
+			...prev,
+			provinceCode: (value as CanadianProvinceOrTerritoryCode) ?? null,
+		}));
+	}, []);
 	const handleYearChange = React.useCallback((value: string | undefined) => {
-		const parsedValue = value ? parseInt(value) as TaxYear : null;
-		setParams(prev => ({...prev, year: parsedValue}));
-	}, [])
+		const parsedValue = value ? (parseInt(value) as TaxYear) : null;
+		setParams(prev => ({ ...prev, year: parsedValue }));
+	}, []);
 
 	const resetInputs = React.useCallback(() => {
 		setParams(defaultParams);
 	}, [setParams, defaultParams]);
 
-	const defaultOutputs: PayrollDeductionsResult & Pick<DeductionsCalculator, "netAnnualIncome"> = {
-		totalFederalTax: 0,
-		totalProvincialTax: 0,
-		totalTax: 0,
-		netAnnualIncome: 0,
-		cppContribution: 0,
-		eiPremium: 0,
-		qpipPremium: 0,
-		totalContributions: 0,
-		totalDeductions: 0
-	}
+	const defaultOutputs: PayrollDeductionsResult & Pick<DeductionsCalculator, 'netAnnualIncome'> =
+		{
+			totalFederalTax: 0,
+			totalProvincialTax: 0,
+			totalTax: 0,
+			netAnnualIncome: 0,
+			cppContribution: 0,
+			eiPremium: 0,
+			qpipPremium: 0,
+			totalContributions: 0,
+			totalDeductions: 0,
+		};
 	const [outputs, setOutputs] = React.useState(defaultOutputs);
 
 	useEffect(() => {
-		if (!params.grossAnnualIncome || !params.provinceCode || !params.year) return
+		if (!params.grossAnnualIncome || !params.provinceCode || !params.year) return;
 
-		const deductionResults = calculatePayrollDeductions(params.grossAnnualIncome, params.provinceCode, params.year);
-		console.log("Deduction Results:", deductionResults);
-		const netAnnualIncome = params.grossAnnualIncome - (deductionResults.totalDeductions);
-		setOutputs({...deductionResults, netAnnualIncome});
+		const deductionResults = calculatePayrollDeductions(
+			params.grossAnnualIncome,
+			params.provinceCode,
+			params.year,
+		);
+		console.log('Deduction Results:', deductionResults);
+		const netAnnualIncome = params.grossAnnualIncome - deductionResults.totalDeductions;
+		setOutputs({ ...deductionResults, netAnnualIncome });
 	}, [params.grossAnnualIncome, params.provinceCode, params.year, setOutputs]);
 
-	const isCompleted = params.grossAnnualIncome !== null && params.provinceCode !== null && params.year !== null;
+	const isCompleted =
+		params.grossAnnualIncome !== null && params.provinceCode !== null && params.year !== null;
 
-	return  {
+	return {
 		isCompleted,
 		...params,
 		...outputs,

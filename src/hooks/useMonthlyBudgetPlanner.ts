@@ -1,4 +1,4 @@
-import {useMemo, useState} from 'react';
+import { useMemo, useState } from 'react';
 
 export interface MonthlyBudgetPlannerProps {
 	initialBudget?: number;
@@ -18,32 +18,41 @@ export interface MonthlyBudgetPlanner {
 	resetCategoryError: () => void;
 }
 
-export type BudgetCategoryIdType = string | "unallocated" | "total";
-export type BudgetCategoryNameType = string | "Unallocated" | "Total";
+export type BudgetCategoryIdType = string | 'unallocated' | 'total';
+export type BudgetCategoryNameType = string | 'Unallocated' | 'Total';
 
 export interface BudgetCategory {
-	id: BudgetCategoryIdType
+	id: BudgetCategoryIdType;
 	name: BudgetCategoryNameType;
 	amount: number;
 	color: string;
 }
 
-export default function useMonthlyBudgetPlanner(props: MonthlyBudgetPlannerProps): MonthlyBudgetPlanner {
+export default function useMonthlyBudgetPlanner(
+	props: MonthlyBudgetPlannerProps,
+): MonthlyBudgetPlanner {
 	const defaultBudget = useMemo(() => 0, []);
 	const defaultCategories = useMemo(() => [], []);
-	const {initialBudget} = props;
+	const { initialBudget } = props;
 
 	const [budget, setBudget] = useState<number>(initialBudget ?? defaultBudget);
 	const [categories, setCategories] = useState<BudgetCategory[]>(defaultCategories);
 	const [categoryError, setCategoryError] = useState<string | null>(null);
 
-	const allocatedAmount = useMemo(() => categories.reduce((acc, category) => acc + category.amount, 0), [categories]);
-	const unallocatedBudget = useMemo(() => ({
-		id: "unallocated",
-		name: "Unallocated",
-		amount: budget - allocatedAmount,
-		color: "#232323"
-	}) as BudgetCategory, [budget, allocatedAmount]);
+	const allocatedAmount = useMemo(
+		() => categories.reduce((acc, category) => acc + category.amount, 0),
+		[categories],
+	);
+	const unallocatedBudget = useMemo(
+		() =>
+			({
+				id: 'unallocated',
+				name: 'Unallocated',
+				amount: budget - allocatedAmount,
+				color: '#232323',
+			}) as BudgetCategory,
+		[budget, allocatedAmount],
+	);
 
 	const resetCategoryError = () => setCategoryError(null);
 
@@ -54,17 +63,17 @@ export default function useMonthlyBudgetPlanner(props: MonthlyBudgetPlannerProps
 		} else {
 			setBudget(defaultBudget);
 		}
-	}
+	};
 	const resetBudget = () => {
 		setBudget(defaultBudget);
 	};
 
 	const isValidCategoryName = (name: string): boolean => {
 		return !categories.find(category => category.name === name);
-	}
+	};
 	const isValidCategoryAmount = (amount: number): boolean => {
 		return amount + allocatedAmount <= budget;
-	}
+	};
 
 	const addCategory = (name: string, amount: number, color: string): boolean => {
 		if (!isValidCategoryName(name)) {
@@ -79,18 +88,18 @@ export default function useMonthlyBudgetPlanner(props: MonthlyBudgetPlannerProps
 		}
 
 		const id = crypto.randomUUID();
-		setCategories(prev => [...prev, {id, name, amount, color}]);
-		return true
-	}
+		setCategories(prev => [...prev, { id, name, amount, color }]);
+		return true;
+	};
 	const removeCategory = (name: string) => {
 		setCategories(prev => prev.filter(category => category.name !== name));
-	}
+	};
 	const categoryExists = (name: string): boolean => {
 		return !!categories.find(category => category.name === name);
-	}
+	};
 	const resetCategories = () => {
 		setCategories(defaultCategories);
-	}
+	};
 
 	return {
 		totalBudget: budget,
@@ -103,6 +112,6 @@ export default function useMonthlyBudgetPlanner(props: MonthlyBudgetPlannerProps
 		resetCategories,
 		unallocatedBudget,
 		categoryError,
-		resetCategoryError
+		resetCategoryError,
 	};
 }

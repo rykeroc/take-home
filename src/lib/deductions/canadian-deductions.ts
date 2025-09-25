@@ -1,15 +1,15 @@
-import * as federalTaxData from './data/canadian-federal-taxes.json'
-import * as provincialTaxData from './data/canadian-provincial-taxes.json'
-import * as cppQppData from './data/canadian-cpp-qpp.json'
-import * as eiQpipData from './data/canadian-ei-qpip.json'
-import {CanadianProvinceOrTerritoryCode} from '@/lib/canadian-provinces';
+import * as federalTaxData from './data/canadian-federal-taxes.json';
+import * as provincialTaxData from './data/canadian-provincial-taxes.json';
+import * as cppQppData from './data/canadian-cpp-qpp.json';
+import * as eiQpipData from './data/canadian-ei-qpip.json';
+import { CanadianProvinceOrTerritoryCode } from '@/lib/canadian-provinces';
 import {
 	CppQppData,
 	EiQpipData,
 	FederalTaxData,
 	ProvincialTaxData,
 	TaxBracket,
-	TaxYear
+	TaxYear,
 } from '@/lib/deductions/canadian-deductions.types';
 
 // Calculate tax rate using the progressive system
@@ -40,7 +40,11 @@ export function calculateFederalTax(income: number, year: TaxYear): number {
 	return calculateProgressiveTax(income, brackets);
 }
 
-export function calculateProvincialTax(income: number, provinceCode: CanadianProvinceOrTerritoryCode, year: TaxYear): number {
+export function calculateProvincialTax(
+	income: number,
+	provinceCode: CanadianProvinceOrTerritoryCode,
+	year: TaxYear,
+): number {
 	const brackets = (provincialTaxData as unknown as ProvincialTaxData)[year][provinceCode];
 	return calculateProgressiveTax(income, brackets);
 }
@@ -48,8 +52,12 @@ export function calculateProvincialTax(income: number, provinceCode: CanadianPro
 /**
  * Calculates CPP (Canada Pension Plan) or QPP (Quebec Pension Plan) contributions.
  */
-export function calculateCppQpp(income: number, provinceCode: CanadianProvinceOrTerritoryCode, year: TaxYear): number {
-	const dataKey = provinceCode === 'QC' ? 'QC' : 'ROC'
+export function calculateCppQpp(
+	income: number,
+	provinceCode: CanadianProvinceOrTerritoryCode,
+	year: TaxYear,
+): number {
+	const dataKey = provinceCode === 'QC' ? 'QC' : 'ROC';
 	const data = (cppQppData as unknown as CppQppData)[year][dataKey];
 
 	if (income <= data.basicExemption) {
@@ -74,7 +82,11 @@ export function calculateCppQpp(income: number, provinceCode: CanadianProvinceOr
  * Calculates EI (Employment Insurance) and QPIP (Quebec Parental Insurance Plan) premiums.
  * Returns an object as QPIP is a separate deduction for Quebec residents.
  */
-export function calculateEiQpip(income: number, provinceCode: CanadianProvinceOrTerritoryCode, year: TaxYear): { eiPremium: number; qpipPremium: number } {
+export function calculateEiQpip(
+	income: number,
+	provinceCode: CanadianProvinceOrTerritoryCode,
+	year: TaxYear,
+): { eiPremium: number; qpipPremium: number } {
 	const data = (eiQpipData as unknown as EiQpipData)[year];
 
 	if (provinceCode === 'QC') {
@@ -95,20 +107,24 @@ export function calculateEiQpip(income: number, provinceCode: CanadianProvinceOr
 }
 
 export interface PayrollDeductionsResult {
-	totalFederalTax: number
-	totalProvincialTax: number
-	totalTax: number
-	cppContribution: number
-	eiPremium: number
-	qpipPremium: number
-	totalContributions: number
-	totalDeductions: number
+	totalFederalTax: number;
+	totalProvincialTax: number;
+	totalTax: number;
+	cppContribution: number;
+	eiPremium: number;
+	qpipPremium: number;
+	totalContributions: number;
+	totalDeductions: number;
 }
 
 /**
  * Main function to calculate all Canadian payroll deductions (taxes + contributions).
  */
-export function calculatePayrollDeductions(taxableIncome: number, provinceCode: CanadianProvinceOrTerritoryCode, year: TaxYear): PayrollDeductionsResult {
+export function calculatePayrollDeductions(
+	taxableIncome: number,
+	provinceCode: CanadianProvinceOrTerritoryCode,
+	year: TaxYear,
+): PayrollDeductionsResult {
 	// Calculate income taxes
 	const totalFederalTax = calculateFederalTax(taxableIncome, year);
 	const totalProvincialTax = calculateProvincialTax(taxableIncome, provinceCode, year);
@@ -119,7 +135,7 @@ export function calculatePayrollDeductions(taxableIncome: number, provinceCode: 
 	const { eiPremium, qpipPremium } = calculateEiQpip(taxableIncome, provinceCode, year);
 	const totalContributions = cppContribution + eiPremium + qpipPremium;
 
-	const totalDeductions = totalTax + totalContributions
+	const totalDeductions = totalTax + totalContributions;
 
 	return {
 		cppContribution,
@@ -129,7 +145,6 @@ export function calculatePayrollDeductions(taxableIncome: number, provinceCode: 
 		totalFederalTax,
 		totalProvincialTax,
 		totalTax,
-		totalDeductions
-	}
+		totalDeductions,
+	};
 }
-
