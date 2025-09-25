@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/tailwind';
 import { Label } from '@/components/ui/label';
 import { Input as ShadcnInput } from '@/components/ui/input';
 

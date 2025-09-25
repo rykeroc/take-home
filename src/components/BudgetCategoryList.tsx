@@ -1,6 +1,6 @@
 /* eslint-disable react/no-children-prop */
 
-import { cn, getRandomColor } from '@/lib/utils';
+import { cn } from '@/lib/utils/tailwind';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash } from 'lucide-react';
@@ -9,12 +9,15 @@ import { AnyFieldApi, useForm } from '@tanstack/react-form';
 import { FormEvent, useRef } from 'react';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { useMonthlyBudgetPlannerContext } from '@/contexts/MonthlyBudgetPlannerContext';
+import { getRandomColor } from '@/lib/utils/color';
 
 export default function BudgetCategoryList() {
 	const { userDefinedCategories, unallocatedBudget, removeCategory } =
 		useMonthlyBudgetPlannerContext();
 
-	const categoryRows = [...userDefinedCategories, unallocatedBudget].map(category => {
+	const allCategories = [...userDefinedCategories, unallocatedBudget];
+
+	const categoryRows = allCategories.map(category => {
 		const isUnallocatedRow = category.id === 'unallocated';
 		const mutedStyle = isUnallocatedRow ? 'text-muted-foreground' : '';
 
@@ -23,6 +26,7 @@ export default function BudgetCategoryList() {
 		return (
 			<TableRow key={category!.name} className={cn('group', 'h-14')}>
 				<TableCell>
+					{/* Selected color dot */}
 					<div
 						className={cn('w-3', 'h-3', 'rounded-full')}
 						style={{ backgroundColor: category.color }}
@@ -31,6 +35,7 @@ export default function BudgetCategoryList() {
 				<TableCell className={cn(mutedStyle)}>{category!.name}</TableCell>
 				<TableCell className={cn(mutedStyle)}>${category!.amount.toFixed(2)}</TableCell>
 				<TableCell className={cn('w-24')}>
+					{/* Enable delete button if user defined row */}
 					{!isUnallocatedRow && (
 						<Button
 							variant={'ghost'}
@@ -49,7 +54,8 @@ export default function BudgetCategoryList() {
 		<div className={cn('flex', 'flex-col', 'gap-4')}>
 			<Label className={cn('text-muted-foreground')}>Budget Categories</Label>
 
-			{/* Add Budget category form*/}
+			{/* Add Budget category form */}
+			{/* Only shown if there is unallocated budget remaining */}
 			{unallocatedBudget.amount > 0 && <NewBudgetCategoryForm />}
 
 			{/* Budget category items */}
@@ -98,29 +104,40 @@ function NewBudgetCategoryForm() {
 		await form.handleSubmit();
 	};
 
+	const validateCategoryAmount = ({ value }: { value: string }): string | undefined => {
+		if (value === '') {
+			return 'Amount is required';
+		}
+		const amount = parseFloat(value);
+		if (isNaN(amount) || amount <= 0) {
+			return 'Amount must be a positive number';
+		}
+		if (unallocatedBudget !== undefined && amount > unallocatedBudget.amount) {
+			return `Amount must not exceed unallocated amount ($${unallocatedBudget.amount.toFixed(2)})`;
+		}
+	};
+
+	const validateCategoryName = ({ value }: { value: string }): string | undefined => {
+		if (value.trim() === '') {
+			return 'Category name is required';
+		}
+		if (value.length < 1 || value.length > 50) {
+			return 'Category name must be between 1 and 50 characters';
+		}
+		if (categoryExists(value)) {
+			return 'Category name must be unique';
+		}
+	};
+
 	return (
 		<form onSubmit={handleSubmit}>
 			<div className={cn('flex', 'flex-col', 'sm:flex-row', 'gap-3', 'items-start')}>
 				<div className={cn('flex', 'gap-3', 'w-full')}>
-					{/* Category Amount */}
+					{/* Category amount input */}
 					<form.Field
 						name={'categoryAmount'}
 						validators={{
-							onChange: ({ value }) => {
-								if (value === '') {
-									return 'Amount is required';
-								}
-								const amount = parseFloat(value);
-								if (isNaN(amount) || amount <= 0) {
-									return 'Amount must be a positive number';
-								}
-								if (
-									unallocatedBudget !== undefined &&
-									amount > unallocatedBudget.amount
-								) {
-									return `Amount must not exceed unallocated amount ($${unallocatedBudget.amount.toFixed(2)})`;
-								}
-							},
+							onChange: validateCategoryAmount,
 						}}
 						children={field => (
 							<div className={cn('flex', 'flex-col', 'gap-1', 'w-full')}>
@@ -140,21 +157,11 @@ function NewBudgetCategoryForm() {
 						)}
 					/>
 
-					{/* Category Name */}
+					{/* Category name input*/}
 					<form.Field
 						name={'categoryName'}
 						validators={{
-							onChange: ({ value }) => {
-								if (value.trim() === '') {
-									return 'Category name is required';
-								}
-								if (value.length < 1 || value.length > 50) {
-									return 'Category name must be between 1 and 50 characters';
-								}
-								if (categoryExists(value)) {
-									return 'Category name must be unique';
-								}
-							},
+							onChange: validateCategoryName,
 						}}
 						children={field => (
 							<div className={cn('flex', 'flex-col', 'gap-1', 'w-full')}>
@@ -174,7 +181,7 @@ function NewBudgetCategoryForm() {
 				</div>
 
 				<div className={cn('flex', 'gap-3', 'w-full')}>
-					{/* Color */}
+					{/* Color input */}
 					<form.Field
 						name={'categoryColor'}
 						children={field => (
@@ -204,6 +211,7 @@ function NewBudgetCategoryForm() {
 				</div>
 			</div>
 
+			{/* Show category error if exists */}
 			{categoryError && <small className={cn('text-red-500')}>{categoryError}</small>}
 		</form>
 	);

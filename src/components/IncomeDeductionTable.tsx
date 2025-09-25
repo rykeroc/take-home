@@ -7,7 +7,8 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { cn, formatCurrency } from '@/lib/utils';
+import { cn } from '@/lib/utils/tailwind';
+import { formatCurrency } from '@/lib/utils/formatting';
 import React from 'react';
 import { useIncomeCalculatorContext } from '@/contexts/IncomeCalculatorContext';
 
@@ -16,7 +17,6 @@ export default function IncomeDeductionTable() {
 		grossAnnualIncome,
 		totalFederalTax,
 		totalProvincialTax,
-		totalTax,
 		cppContribution,
 		eiPremium,
 		totalDeductions,
@@ -24,11 +24,10 @@ export default function IncomeDeductionTable() {
 
 	const deductionOutputs = [
 		{ label: 'Gross Annual Income', value: grossAnnualIncome },
-		{ label: 'Federal Tax', value: totalFederalTax },
-		{ label: 'Provincial Tax', value: totalProvincialTax },
-		{ label: 'Total Tax', value: totalTax },
-		{ label: 'CPP', value: cppContribution },
-		{ label: 'EI', value: eiPremium },
+		{ label: 'Federal Tax', value: totalFederalTax * -1 },
+		{ label: 'Provincial Tax', value: totalProvincialTax * -1 },
+		{ label: 'CPP', value: cppContribution * -1 },
+		{ label: 'EI', value: eiPremium * -1 },
 	];
 
 	const deductionTableRows = deductionOutputs.map(({ label, value }) =>

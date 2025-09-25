@@ -4,12 +4,14 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from '@/components/ui/chart';
-import { Pie, PieChart, PieLabel } from 'recharts';
+import { Pie, PieChart } from 'recharts';
 import * as React from 'react';
-import { cn, formatCurrency } from '@/lib/utils';
+import { cn } from '@/lib/utils/tailwind';
+import { formatCurrency } from '@/lib/utils/formatting';
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { useMemo } from 'react';
 import { useMonthlyBudgetPlannerContext } from '@/contexts/MonthlyBudgetPlannerContext';
+import { pieLabelCurrencyFormatter } from '@/lib/utils/chart';
 
 type BudgetCategoriesBreakdownPieChartProps = React.ComponentProps<'div'>;
 
@@ -37,22 +39,6 @@ export default function BudgetCategoriesBreakdownPieChart(
 
 		return acc;
 	}, {} as ChartConfig);
-
-	console.log(chartConfig);
-
-	const pieLabelFormatter: PieLabel = ({ payload, ...props }) => (
-		<text
-			cx={props.cx}
-			cy={props.cy}
-			x={props.x}
-			y={props.y}
-			textAnchor={props.textAnchor}
-			dominantBaseline={props.dominantBaseline}
-			fill="hsla(var(--foreground))"
-		>
-			{formatCurrency(payload.value)}
-		</text>
-	);
 
 	const formatter = React.useCallback(
 		(value: ValueType, name: NameType) => {
@@ -89,7 +75,12 @@ export default function BudgetCategoriesBreakdownPieChart(
 		<ChartContainer config={chartConfig} className={props.className}>
 			<PieChart>
 				<ChartTooltip content={<ChartTooltipContent formatter={formatter} hideLabel />} />
-				<Pie data={pieData} nameKey={'id'} dataKey={'value'} label={pieLabelFormatter} />
+				<Pie
+					data={pieData}
+					nameKey={'id'}
+					dataKey={'value'}
+					label={pieLabelCurrencyFormatter}
+				/>
 			</PieChart>
 		</ChartContainer>
 	);

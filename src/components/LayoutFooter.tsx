@@ -1,7 +1,7 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/tailwind';
 import { Separator } from '@/components/ui/separator';
 
-export default function Footer() {
+export default function LayoutFooter() {
 	const currentYear = new Date().getFullYear();
 
 	return (

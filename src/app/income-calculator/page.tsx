@@ -33,6 +33,6 @@ export const metadata: Metadata = {
 	},
 };
 
-export default function IncomeCalculatorPage() {
-	return <IncomeCalculatorPageClient />;
-}
+const IncomeCalculatorPage = () => <IncomeCalculatorPageClient />;
+
+export default IncomeCalculatorPage;

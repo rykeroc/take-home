@@ -1,5 +1,5 @@
 import { CanadianProvinceOrTerritoryCode } from '@/lib/canadian-provinces';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { TaxYear } from '@/lib/deductions/canadian-deductions.types';
 import {
 	calculatePayrollDeductions,
@@ -24,25 +24,40 @@ interface DeductionsCalculatorParams {
 	year: TaxYear | null;
 }
 
+const defaultParams: DeductionsCalculatorParams = {
+	grossAnnualIncome: 0,
+	provinceCode: null,
+	year: null,
+};
+
+const defaultOutputs: PayrollDeductionsResult & Pick<DeductionsCalculator, 'netAnnualIncome'> = {
+	totalFederalTax: 0,
+	totalProvincialTax: 0,
+	totalTax: 0,
+	netAnnualIncome: 0,
+	cppContribution: 0,
+	eiPremium: 0,
+	qpipPremium: 0,
+	totalContributions: 0,
+	totalDeductions: 0,
+};
+
 export function useDeductionsCalculator(): DeductionsCalculator {
-	const defaultParams: DeductionsCalculatorParams = useMemo(() => {
-		return {
-			grossAnnualIncome: 0,
-			provinceCode: null,
-			year: null,
-		};
-	}, []);
 	const [params, setParams] = React.useState<DeductionsCalculatorParams>(defaultParams);
+
+	// Input handlers
 	const handleGrossAnnualIncomeChange = React.useCallback((value: string | undefined) => {
 		const parsedValue = value ? parseFloat(value) : 0;
 		setParams(prev => ({ ...prev, grossAnnualIncome: parsedValue }));
 	}, []);
+
 	const handleProvinceCodeChange = React.useCallback((value: string | undefined) => {
 		setParams(prev => ({
 			...prev,
 			provinceCode: (value as CanadianProvinceOrTerritoryCode) ?? null,
 		}));
 	}, []);
+
 	const handleYearChange = React.useCallback((value: string | undefined) => {
 		const parsedValue = value ? (parseInt(value) as TaxYear) : null;
 		setParams(prev => ({ ...prev, year: parsedValue }));
@@ -50,22 +65,11 @@ export function useDeductionsCalculator(): DeductionsCalculator {
 
 	const resetInputs = React.useCallback(() => {
 		setParams(defaultParams);
-	}, [setParams, defaultParams]);
+	}, [setParams]);
 
-	const defaultOutputs: PayrollDeductionsResult & Pick<DeductionsCalculator, 'netAnnualIncome'> =
-		{
-			totalFederalTax: 0,
-			totalProvincialTax: 0,
-			totalTax: 0,
-			netAnnualIncome: 0,
-			cppContribution: 0,
-			eiPremium: 0,
-			qpipPremium: 0,
-			totalContributions: 0,
-			totalDeductions: 0,
-		};
 	const [outputs, setOutputs] = React.useState(defaultOutputs);
 
+	// Recalculate outputs when inputs change
 	useEffect(() => {
 		if (!params.grossAnnualIncome || !params.provinceCode || !params.year) return;
 
@@ -74,11 +78,12 @@ export function useDeductionsCalculator(): DeductionsCalculator {
 			params.provinceCode,
 			params.year,
 		);
-		console.log('Deduction Results:', deductionResults);
 		const netAnnualIncome = params.grossAnnualIncome - deductionResults.totalDeductions;
+
 		setOutputs({ ...deductionResults, netAnnualIncome });
 	}, [params.grossAnnualIncome, params.provinceCode, params.year, setOutputs]);
 
+	// Is the form completed
 	const isCompleted =
 		params.grossAnnualIncome !== null && params.provinceCode !== null && params.year !== null;
 

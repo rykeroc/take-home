@@ -26,6 +26,6 @@ export const metadata: Metadata = {
 	},
 };
 
-export default function BudgetPlannerPage() {
-	return <BudgetPlannerPageClient />;
-}
+const BudgetPlannerPage = () => <BudgetPlannerPageClient />;
+
+export default BudgetPlannerPage;

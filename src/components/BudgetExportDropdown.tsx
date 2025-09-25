@@ -12,7 +12,7 @@ import Papa from 'papaparse';
 import { useMemo } from 'react';
 import { BudgetCategory } from '@/hooks/useMonthlyBudgetPlanner';
 
-export default function MonthlyBudgetExportDropdown() {
+export default function BudgetExportDropdown() {
 	const { userDefinedCategories, unallocatedBudget, totalBudget } =
 		useMonthlyBudgetPlannerContext();
 

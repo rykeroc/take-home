@@ -4,12 +4,14 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from '@/components/ui/chart';
-import { Pie, PieChart, PieLabel } from 'recharts';
+import { Pie, PieChart } from 'recharts';
 import * as React from 'react';
-import { cn, formatCurrency } from '@/lib/utils';
+import { cn } from '@/lib/utils/tailwind';
+import { formatCurrency } from '@/lib/utils/formatting';
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { useIncomeCalculatorContext } from '@/contexts/IncomeCalculatorContext';
 import { useMemo } from 'react';
+import { pieLabelCurrencyFormatter } from '@/lib/utils/chart';
 
 type IncomeDeductionsBreakdownPieChartProps = React.ComponentProps<'div'>;
 
@@ -48,20 +50,6 @@ export default function IncomeDeductionsBreakdownPieChart(
 			fill: 'var(--color-net-income',
 		},
 	];
-
-	const pieLabelFormatter: PieLabel = ({ payload, ...props }) => (
-		<text
-			cx={props.cx}
-			cy={props.cy}
-			x={props.x}
-			y={props.y}
-			textAnchor={props.textAnchor}
-			dominantBaseline={props.dominantBaseline}
-			fill="hsla(var(--foreground))"
-		>
-			{formatCurrency(payload.value)}
-		</text>
-	);
 
 	const chartConfig: ChartConfig = useMemo(
 		() => ({
@@ -124,7 +112,12 @@ export default function IncomeDeductionsBreakdownPieChart(
 		<ChartContainer config={chartConfig} className={props.className}>
 			<PieChart>
 				<ChartTooltip content={<ChartTooltipContent formatter={formatter} hideLabel />} />
-				<Pie data={pieData} nameKey={'name'} dataKey={'value'} label={pieLabelFormatter} />
+				<Pie
+					data={pieData}
+					nameKey={'name'}
+					dataKey={'value'}
+					label={pieLabelCurrencyFormatter}
+				/>
 			</PieChart>
 		</ChartContainer>
 	);

@@ -28,30 +28,35 @@ export interface BudgetCategory {
 	color: string;
 }
 
+const defaultBudget = 0;
+const defaultCategories = [] as BudgetCategory[];
+
 export default function useMonthlyBudgetPlanner(
 	props: MonthlyBudgetPlannerProps,
 ): MonthlyBudgetPlanner {
-	const defaultBudget = useMemo(() => 0, []);
-	const defaultCategories = useMemo(() => [], []);
 	const { initialBudget } = props;
 
-	const [budget, setBudget] = useState<number>(initialBudget ?? defaultBudget);
-	const [categories, setCategories] = useState<BudgetCategory[]>(defaultCategories);
+	const [totalBudget, setTotalBudget] = useState<number>(initialBudget ?? defaultBudget);
+	const [userDefinedCategories, setUserDefinedCategories] =
+		useState<BudgetCategory[]>(defaultCategories);
 	const [categoryError, setCategoryError] = useState<string | null>(null);
 
+	// Calculate allocated budget amount
 	const allocatedAmount = useMemo(
-		() => categories.reduce((acc, category) => acc + category.amount, 0),
-		[categories],
+		() => userDefinedCategories.reduce((acc, category) => acc + category.amount, 0),
+		[userDefinedCategories],
 	);
+
+	// Calculate unallocated budget
 	const unallocatedBudget = useMemo(
 		() =>
 			({
 				id: 'unallocated',
 				name: 'Unallocated',
-				amount: budget - allocatedAmount,
+				amount: totalBudget - allocatedAmount,
 				color: '#232323',
 			}) as BudgetCategory,
-		[budget, allocatedAmount],
+		[totalBudget, allocatedAmount],
 	);
 
 	const resetCategoryError = () => setCategoryError(null);
@@ -59,20 +64,22 @@ export default function useMonthlyBudgetPlanner(
 	const handleBudgetChange = (value: string) => {
 		const numericValue = parseFloat(value);
 		if (!isNaN(numericValue)) {
-			setBudget(numericValue);
+			setTotalBudget(numericValue);
 		} else {
-			setBudget(defaultBudget);
+			setTotalBudget(defaultBudget);
 		}
 	};
+
 	const resetBudget = () => {
-		setBudget(defaultBudget);
+		setTotalBudget(defaultBudget);
 	};
 
 	const isValidCategoryName = (name: string): boolean => {
-		return !categories.find(category => category.name === name);
+		return !userDefinedCategories.find(category => category.name === name);
 	};
+
 	const isValidCategoryAmount = (amount: number): boolean => {
-		return amount + allocatedAmount <= budget;
+		return amount + allocatedAmount <= totalBudget;
 	};
 
 	const addCategory = (name: string, amount: number, color: string): boolean => {
@@ -88,24 +95,27 @@ export default function useMonthlyBudgetPlanner(
 		}
 
 		const id = crypto.randomUUID();
-		setCategories(prev => [...prev, { id, name, amount, color }]);
+		setUserDefinedCategories(prev => [...prev, { id, name, amount, color }]);
 		return true;
 	};
+
 	const removeCategory = (name: string) => {
-		setCategories(prev => prev.filter(category => category.name !== name));
+		setUserDefinedCategories(prev => prev.filter(category => category.name !== name));
 	};
+
 	const categoryExists = (name: string): boolean => {
-		return !!categories.find(category => category.name === name);
+		return !!userDefinedCategories.find(category => category.name === name);
 	};
+
 	const resetCategories = () => {
-		setCategories(defaultCategories);
+		setUserDefinedCategories(defaultCategories);
 	};
 
 	return {
-		totalBudget: budget,
+		totalBudget,
 		handleBudgetChange,
 		resetBudget,
-		userDefinedCategories: categories,
+		userDefinedCategories,
 		addCategory,
 		removeCategory,
 		categoryExists,

@@ -2,10 +2,10 @@ import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
 import './globals.css';
 import React from 'react';
-import HeaderNavigation from '@/components/HeaderNavigation';
-import { cn } from '@/lib/utils';
+import LayoutNavigation from '@/components/LayoutNavigation';
+import { cn } from '@/lib/utils/tailwind';
 import { Toaster } from '@/components/ui/sonner';
-import Footer from '@/components/Footer';
+import LayoutFooter from '@/components/LayoutFooter';
 
 export const metadata: Metadata = {
 	metadataBase: new URL('https://take-home-gray.vercel.app/'),
@@ -73,11 +73,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 					'flex-col',
 				)}
 			>
-				<HeaderNavigation />
+				<LayoutNavigation />
 				<main className={cn('flex', 'flex-col', 'items-center', 'w-full', 'flex-1')}>
 					<div className={layoutClasses}>{children}</div>
 				</main>
-				<Footer />
+				<LayoutFooter />
 				<Toaster position={'top-center'} />
 			</body>
 		</html>

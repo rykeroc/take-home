@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/tailwind';
 import { ReactNode } from 'react';
 import {
 	Calculator,
@@ -23,10 +23,33 @@ type FeaturesCardDetails = DescriptorDetails & {
 	href: string;
 };
 
-export default function Home() {
-	const iconClasses = cn('w-6 h-6 text-primary');
-	const iconBackgroundClasses = cn('bg-primary/15 rounded-lg p-3');
+const iconClasses = cn('w-6 h-6 text-primary');
+const iconBackgroundClasses = cn('bg-primary/15 rounded-lg p-3');
 
+const HomePage = () => (
+	<div className={cn('flex', 'flex-col', 'gap-20')}>
+		<HeroSection />
+
+		<FeaturesSection />
+
+		<FooterDescriptorsSection />
+	</div>
+);
+
+export default HomePage;
+
+const HeroSection = () => (
+	<section className={cn('flex', 'flex-col', 'gap-5', 'items-center', 'w-full')}>
+		<h1 className={'text-center'}>
+			Plan your <span className={cn('text-primary')}>Financial Future</span>
+		</h1>
+		<h5 className={cn('text-muted-foreground', 'text-center')}>
+			Simple, powerful tools to calculate your income and plan your budget effectively.
+		</h5>
+	</section>
+);
+
+const FeaturesSection = () => {
 	const featuresCardsDetails: FeaturesCardDetails[] = [
 		{
 			icon: <Calculator className={iconClasses} />,
@@ -52,7 +75,7 @@ export default function Home() {
 		},
 	];
 
-	const FeatureCards = featuresCardsDetails.map(card => (
+	const cards = featuresCardsDetails.map(card => (
 		<Card key={card.title} className={'w-full'}>
 			<CardHeader className={cn('flex', 'flex-col', 'gap-3')}>
 				<div className={iconBackgroundClasses}>{card.icon}</div>
@@ -81,6 +104,10 @@ export default function Home() {
 		</Card>
 	));
 
+	return <section className={cn('flex', 'flex-col', 'gap-5', 'md:flex-row')}>{cards}</section>;
+};
+
+const FooterDescriptorsSection = () => {
 	const footerDescriptorDetails: DescriptorDetails[] = [
 		{
 			icon: <Shield className={iconClasses} />,
@@ -102,7 +129,7 @@ export default function Home() {
 		},
 	];
 
-	const FooterDescriptors = footerDescriptorDetails.map(desc => (
+	const descriptors = footerDescriptorDetails.map(desc => (
 		<div
 			key={desc.title}
 			className={cn('flex', 'flex-col', 'gap-2', 'items-center', 'text-center', 'max-w-xs')}
@@ -114,27 +141,9 @@ export default function Home() {
 	));
 
 	return (
-		<div className={cn('flex', 'flex-col', 'gap-20')}>
-			<section className={cn('flex', 'flex-col', 'gap-5', 'items-center', 'w-full')}>
-				<h1 className={'text-center'}>
-					Plan your <span className={cn('text-primary')}>Financial Future</span>
-				</h1>
-				<h5 className={cn('text-muted-foreground', 'text-center')}>
-					Simple, powerful tools to calculate your income and plan your budget
-					effectively.
-				</h5>
-			</section>
-
-			<section className={cn('flex', 'flex-col', 'gap-5', 'md:flex-row')}>
-				{FeatureCards}
-			</section>
-
-			<section className={cn('flex', 'flex-col', 'gap-10', 'items-center')}>
-				<h3>Why use Take Home?</h3>
-				<div className={cn('flex', 'flex-col', 'gap-5', 'md:flex-row')}>
-					{FooterDescriptors}
-				</div>
-			</section>
-		</div>
+		<section className={cn('flex', 'flex-col', 'gap-10', 'items-center')}>
+			<h3>Why use Take Home?</h3>
+			<div className={cn('flex', 'flex-col', 'gap-5', 'md:flex-row')}>{descriptors}</div>
+		</section>
 	);
-}
+};

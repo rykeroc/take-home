@@ -19,13 +19,13 @@ import {
 	SheetTrigger,
 } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/tailwind';
 
 interface LinkData extends React.ComponentProps<typeof NavigationMenuPrimitive.Link> {
 	icon: React.ReactNode;
 }
 
-const HeaderNavigation = () => {
+const LayoutNavigation = () => {
 	const appName = 'Take Home';
 
 	const iconClasses = cn('!h-6', '!w-6', 'text-primary');
@@ -127,4 +127,4 @@ const HeaderNavigation = () => {
 	);
 };
 
-export default HeaderNavigation;
+export default LayoutNavigation;

@@ -4,7 +4,7 @@ import {
 	IncomeCalculatorProvider,
 	useIncomeCalculatorContext,
 } from '@/contexts/IncomeCalculatorContext';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/tailwind';
 import { Button } from '@/components/ui/button';
 import { CanadianProvinceNameToCodeMap } from '@/lib/canadian-provinces';
 import {
@@ -24,24 +24,24 @@ import AnnualDeductionsBreakdownPieChart from '@/components/IncomeDeductionsBrea
 import Link from 'next/link';
 import React from 'react';
 
-export default function IncomeCalculatorPageClient() {
-	return (
-		<IncomeCalculatorProvider>
-			<div className={cn('flex', 'flex-col', 'gap-4', 'w-full')}>
-				<Header />
+export const IncomeCalculatorPageClient = () => (
+	<IncomeCalculatorProvider>
+		<div className={cn('flex', 'flex-col', 'gap-4', 'w-full')}>
+			<HeaderSection />
 
-				<InputsCard />
+			<InputsCard />
 
-				<CompletedOutputs />
-			</div>
-		</IncomeCalculatorProvider>
-	);
-}
+			<CompletedOutputsSection />
+		</div>
+	</IncomeCalculatorProvider>
+);
 
-const Header = () => {
+export default IncomeCalculatorPageClient;
+
+const HeaderSection = () => {
 	const { resetInput } = useIncomeCalculatorContext();
 	return (
-		<div className={cn('flex', 'w-full', 'justify-between')}>
+		<section className={cn('flex', 'w-full', 'justify-between')}>
 			<div className={cn('flex', 'flex-col', 'gap-1')}>
 				<h1>Income Calculator</h1>
 				<p className={cn('text-muted-foreground')}>
@@ -51,7 +51,7 @@ const Header = () => {
 			<Button variant={'ghost'} onClick={resetInput}>
 				Reset
 			</Button>
-		</div>
+		</section>
 	);
 };
 
@@ -64,7 +64,7 @@ const InputsCard = () => {
 		provinceCode,
 		year,
 		handleInputChange,
-		handleInputGrossIncomeTypeChange,
+		handleGrossIncomeTypeChange,
 		handleProvinceCodeChange,
 		handleYearChange,
 	} = useIncomeCalculatorContext();
@@ -112,7 +112,7 @@ const InputsCard = () => {
 
 					<Select
 						value={grossIncomeType}
-						onValueChange={e => handleInputGrossIncomeTypeChange(e as GrossIncomeType)}
+						onValueChange={e => handleGrossIncomeTypeChange(e as GrossIncomeType)}
 					>
 						<SelectTrigger className={cn('w-full', 'sm:w-1/2')}>
 							<SelectValue placeholder="Select income type" />
@@ -179,19 +179,19 @@ const InputsCard = () => {
 	);
 };
 
-const CompletedOutputs = () => {
+const CompletedOutputsSection = () => {
 	const { isCompleted } = useIncomeCalculatorContext();
 
+	if (!isCompleted) return null;
+
 	return (
-		isCompleted && (
-			<>
-				<NetIncomeCard />
+		<>
+			<NetIncomeCard />
 
-				<AnnualDeductionsCard />
+			<AnnualDeductionsCard />
 
-				<FooterMessage />
-			</>
-		)
+			<FooterMessage />
+		</>
 	);
 };
 
@@ -267,7 +267,7 @@ const FooterMessage = () => {
 	const { monthlyWage } = useIncomeCalculatorContext();
 	return (
 		<div className={cn('flex', 'flex-col', 'gap-3')}>
-			<p>You can use the results to create a custom budget by clicking the button below!</p>
+			<p>You can use the results to create a custom budget by clicking the button below</p>
 			<Button className={cn('w-fit')} asChild>
 				<Link href={`/budget-planner?monthlyBudget=${monthlyWage.toFixed(2)}`}>
 					Create Budget

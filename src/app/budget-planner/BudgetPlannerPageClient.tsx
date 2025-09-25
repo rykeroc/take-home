@@ -5,15 +5,15 @@ import {
 	MonthlyBudgetPlannerProvider,
 	useMonthlyBudgetPlannerContext,
 } from '@/contexts/MonthlyBudgetPlannerContext';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/Input';
 import { Separator } from '@/components/ui/separator';
 import BudgetCategoryList from '@/components/BudgetCategoryList';
-import MonthlyBudgetExportDropdown from '@/components/MonthlyBudgetExportDropdown';
+import BudgetExportDropdown from '@/components/BudgetExportDropdown';
 import BudgetCategoriesBreakdownPieChart from '@/components/BudgetCategoriesBreakdownPieChart';
 import React from 'react';
+import { cn } from '@/lib/utils/tailwind';
 
 const BudgetPlannerPageClient = () => {
 	const searchParams = useSearchParams();
@@ -23,7 +23,7 @@ const BudgetPlannerPageClient = () => {
 	return (
 		<MonthlyBudgetPlannerProvider initialBudget={initialBudget}>
 			<div className={cn('flex', 'flex-col', 'gap-4', 'w-full')}>
-				<Header />
+				<HeaderSection />
 
 				<InputsCard />
 
@@ -35,7 +35,7 @@ const BudgetPlannerPageClient = () => {
 
 export default BudgetPlannerPageClient;
 
-const Header = () => {
+const HeaderSection = () => {
 	const { resetBudget } = useMonthlyBudgetPlannerContext();
 
 	return (
@@ -54,6 +54,8 @@ const Header = () => {
 
 const InputsCard = () => {
 	const { totalBudget, handleBudgetChange } = useMonthlyBudgetPlannerContext();
+	const isZeroBudget = totalBudget === 0;
+	const totalBudgetValue = isZeroBudget ? '' : totalBudget.toString();
 	return (
 		<Card>
 			<CardHeader>
@@ -67,11 +69,11 @@ const InputsCard = () => {
 					placeholder={'0'}
 					label={'Monthly Budget'}
 					prefix={'$'}
-					value={totalBudget === 0 ? '' : totalBudget}
+					value={totalBudgetValue}
 					onChange={e => handleBudgetChange(e.target.value)}
 				/>
 
-				{totalBudget !== 0 && (
+				{!isZeroBudget && (
 					<>
 						<Separator />
 
@@ -84,17 +86,17 @@ const InputsCard = () => {
 };
 
 const Summary = () => {
-	const { userDefinedCategories } = useMonthlyBudgetPlannerContext();
+	const { userDefinedCategories, totalBudget } = useMonthlyBudgetPlannerContext();
 
-	// Don't show summary if no categories
-	if (userDefinedCategories.length === 0) return null;
+	// Don't show summary if no user categories
+	if (totalBudget === 0 || userDefinedCategories.length === 0) return null;
 
 	return (
 		<Card>
 			<CardHeader className={cn('flex', 'justify-between')}>
 				<CardTitle>Summary</CardTitle>
 
-				<MonthlyBudgetExportDropdown />
+				<BudgetExportDropdown />
 			</CardHeader>
 			<CardContent>
 				<BudgetCategoriesBreakdownPieChart />
