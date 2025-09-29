@@ -6,6 +6,8 @@ import LayoutNavigation from '@/components/LayoutNavigation';
 import { cn } from '@/lib/utils/tailwind';
 import { Toaster } from '@/components/ui/sonner';
 import LayoutFooter from '@/components/LayoutFooter';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
 	metadataBase: new URL('https://take-home-gray.vercel.app/'),
@@ -79,6 +81,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 				</main>
 				<LayoutFooter />
 				<Toaster position={'top-center'} />
+				<Analytics/>
+				<SpeedInsights/>
 			</body>
 		</html>
 	);
