@@ -4,12 +4,12 @@ import { cn } from '@/lib/utils/tailwind';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash } from 'lucide-react';
-import { Label } from '@/components/ui/label';
-import { AnyFieldApi, useForm } from '@tanstack/react-form';
+import { useForm } from '@tanstack/react-form';
 import { FormEvent, useRef } from 'react';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { useMonthlyBudgetPlannerContext } from '@/contexts/MonthlyBudgetPlannerContext';
 import { getRandomColor } from '@/lib/utils/color';
+import FieldError from '@/components/FieldError';
 
 export default function BudgetCategoryList() {
 	const { userDefinedCategories, unallocatedBudget, removeCategory } =
@@ -213,10 +213,4 @@ function NewBudgetCategoryForm() {
 			{categoryError && <small className={cn('text-red-500')}>{categoryError}</small>}
 		</form>
 	);
-}
-
-function FieldError({ field }: { field: AnyFieldApi }) {
-	return field.state.meta.isTouched && !field.state.meta.isValid ? (
-		<small className={cn('text-red-500')}>{field.state.meta.errors.join(', ')}</small>
-	) : null;
 }
