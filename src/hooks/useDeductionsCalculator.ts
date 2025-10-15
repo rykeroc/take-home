@@ -12,13 +12,11 @@ export interface DeductionsCalculator extends PayrollDeductionsResult {
 	year: TaxYear | null;
 	netAnnualIncome: number;
 	grossAnnualIncome: number;
-	handleGrossAnnualIncomeChange: (value: string | undefined) => void;
-	handleProvinceCodeChange: (value: string | undefined) => void;
-	handleYearChange: (value: string | undefined) => void;
-	resetInputs: () => void;
+	handleParamsChange: (fields: Partial<DeductionsCalculatorParams>) => void;
+	resetParams: () => void;
 }
 
-interface DeductionsCalculatorParams {
+export interface DeductionsCalculatorParams {
 	grossAnnualIncome: number;
 	provinceCode: CanadianProvinceOrTerritoryCode | null;
 	year: TaxYear | null;
@@ -46,24 +44,14 @@ export function useDeductionsCalculator(): DeductionsCalculator {
 	const [params, setParams] = React.useState<DeductionsCalculatorParams>(defaultParams);
 
 	// Input handlers
-	const handleGrossAnnualIncomeChange = React.useCallback((value: string | undefined) => {
-		const parsedValue = value ? parseFloat(value) : 0;
-		setParams(prev => ({ ...prev, grossAnnualIncome: parsedValue }));
-	}, []);
-
-	const handleProvinceCodeChange = React.useCallback((value: string | undefined) => {
+	const handleParamsChange = React.useCallback((fields: Partial<DeductionsCalculatorParams>) =>
 		setParams(prev => ({
-			...prev,
-			provinceCode: (value as CanadianProvinceOrTerritoryCode) ?? null,
-		}));
-	}, []);
+				...prev,
+				...fields,
+			}),
+		), []);
 
-	const handleYearChange = React.useCallback((value: string | undefined) => {
-		const parsedValue = value ? (parseInt(value) as TaxYear) : null;
-		setParams(prev => ({ ...prev, year: parsedValue }));
-	}, []);
-
-	const resetInputs = React.useCallback(() => {
+	const resetParams = React.useCallback(() => {
 		setParams(defaultParams);
 	}, [setParams]);
 
@@ -89,11 +77,9 @@ export function useDeductionsCalculator(): DeductionsCalculator {
 
 	return {
 		isCompleted,
+		handleParamsChange,
 		...params,
 		...outputs,
-		handleGrossAnnualIncomeChange,
-		handleProvinceCodeChange,
-		handleYearChange,
-		resetInputs,
+		resetParams,
 	};
 }

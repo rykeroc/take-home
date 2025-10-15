@@ -6,7 +6,7 @@ import {
 } from '@/contexts/IncomeCalculatorContext';
 import { cn } from '@/lib/utils/tailwind';
 import { Button } from '@/components/ui/button';
-import { CanadianProvinceNameToCodeMap } from '@/lib/canadian-provinces';
+import { CanadianProvinceNameToCodeMap, CanadianProvinceOrTerritoryCode } from '@/lib/canadian-provinces';
 import {
 	Select,
 	SelectContent,
@@ -14,7 +14,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { TaxYears } from '@/lib/deductions/canadian-deductions.types';
+import { TaxYear, TaxYears } from '@/lib/deductions/canadian-deductions.types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/Input';
 import { GrossIncomeType } from '@/hooks/useIncomeCalculator';
@@ -22,7 +22,10 @@ import { Separator } from '@/components/ui/separator';
 import AnnualDeductionTable from '@/components/IncomeDeductionTable';
 import AnnualDeductionsBreakdownPieChart from '@/components/IncomeDeductionsBreakdownPieChart';
 import Link from 'next/link';
-import React from 'react';
+import React, { useCallback } from 'react';
+import { useForm } from '@tanstack/react-form';
+import FieldError from '@/components/FieldError';
+import { isNegativeOrZero } from '@/lib/utils/validations';
 
 export const IncomeCalculatorPageClient = () => (
 	<IncomeCalculatorProvider>
@@ -41,7 +44,7 @@ export const IncomeCalculatorPageClient = () => (
 export default IncomeCalculatorPageClient;
 
 const HeaderSection = () => {
-	const { resetInput } = useIncomeCalculatorContext();
+	const { resetParams } = useIncomeCalculatorContext();
 	return (
 		<section className={cn('flex', 'w-full', 'justify-between')}>
 			<div className={cn('flex', 'flex-col', 'gap-1')}>
@@ -50,7 +53,7 @@ const HeaderSection = () => {
 					Calculate your income after deductions
 				</p>
 			</div>
-			<Button variant={'ghost'} onClick={resetInput}>
+			<Button variant={'ghost'} onClick={resetParams}>
 				Reset
 			</Button>
 		</section>
@@ -59,25 +62,29 @@ const HeaderSection = () => {
 
 const RequiredInputsCard = () => {
 	const {
-		grossIncome,
-		grossIncomeType,
-		hoursPerWeek,
-		daysPerWeek,
-		provinceCode,
-		year,
-		handleInputChange,
-		handleGrossIncomeTypeChange,
-		handleProvinceCodeChange,
-		handleYearChange,
+		handleParamsChange,
 	} = useIncomeCalculatorContext();
 
-	const formattedInputs = {
-		grossIncome: grossIncome === 0 ? '' : grossIncome.toString(),
-		hoursPerWeek: hoursPerWeek === 0 ? '' : hoursPerWeek.toString(),
-		daysPerWeek: daysPerWeek === 0 ? '' : daysPerWeek.toString(),
-		provinceCode: provinceCode ?? '',
-		year: year?.toString() ?? '',
-	};
+	const form = useForm({
+		defaultValues: {
+			grossIncome: '',
+			grossIncomeType: 'hourly' as GrossIncomeType,
+			hoursPerWeek: '37.5',
+			daysPerWeek: '5',
+			provinceCode: null as CanadianProvinceOrTerritoryCode | null,
+			year: null as TaxYear | null,
+		},
+		validators: {
+			onChange: ({ value }) => handleParamsChange({
+				grossIncome: parseFloat(value.grossIncome) || 0,
+				grossIncomeType: value.grossIncomeType,
+				hoursPerWeek: parseFloat(value.hoursPerWeek) || 0,
+				daysPerWeek: parseInt(value.daysPerWeek) || 0,
+				provinceCode: value.provinceCode,
+				year: value.year,
+			}),
+		},
+	});
 
 	const canadianProvinceAndTerritorySelectItems = Object.entries(
 		CanadianProvinceNameToCodeMap,
@@ -93,93 +100,173 @@ const RequiredInputsCard = () => {
 		</SelectItem>
 	));
 
+	const validateGrossIncome = ({ value }: { value: string }): string | undefined => {
+		if (!value) return undefined;
+
+		if (!isNegativeOrZero(value)) return 'Please enter a valid number';
+	};
+
+	const validateHoursPerWeek = ({ value }: { value: string }): string | undefined => {
+		if (!value) return undefined;
+
+		if (!isNegativeOrZero(value)) return 'Please enter a valid number';
+		if (parseFloat(value) > 168) return 'Hours per week cannot be more than 168';
+	};
+
+	const validateDaysPerWeek = ({ value }: { value: string }): string | undefined => {
+		if (!value) return undefined;
+
+		if (!isNegativeOrZero(value)) return 'Please enter a valid number';
+		if (parseInt(value) > 7) return 'Days per week cannot be more than 7';
+	};
+
 	return (
 		<Card>
 			<CardHeader>
 				<CardTitle>Required Inputs</CardTitle>
 			</CardHeader>
 			<CardContent className={cn('flex', 'flex-col', 'gap-3')}>
-				<div className={cn('flex', 'gap-3', 'items-end')}>
-					<Input
-						id={'amount'}
-						label={'Amount'}
-						type={'number'}
-						step="0.01"
-						min="0"
-						prefix={'$'}
-						placeholder="0"
-						value={formattedInputs.grossIncome}
-						onChange={e => handleInputChange('grossIncome', e.target.value)}
-						required
+				<div className={cn('flex', 'gap-3', 'items-start')}>
+					<form.Field
+						name={'grossIncome'}
+						validators={{
+							onChange: validateGrossIncome,
+						}}
+						children={field => (
+							<div className={cn('flex', 'flex-col', 'gap-1', 'w-full')}>
+								<Input
+									id={field.name}
+									label={'Amount'}
+									type={'number'}
+									step="0.01"
+									min="0"
+									prefix={'$'}
+									placeholder="0"
+									value={field.state.value.toString()}
+									onChange={e => field.handleChange(e.target.value)}
+									required
+								/>
+								<FieldError field={field} />
+							</div>
+						)}
 					/>
 
-					<Select
-						value={grossIncomeType}
-						onValueChange={e => handleGrossIncomeTypeChange(e as GrossIncomeType)}
-					>
-						<SelectTrigger className={cn('w-full', 'sm:w-1/2')}>
-							<SelectValue placeholder="Select income type" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="hourly">Hourly</SelectItem>
-							<SelectItem value="yearly">Yearly</SelectItem>
-						</SelectContent>
-					</Select>
+					<form.Field
+						name={'grossIncomeType'}
+						children={field => (
+							<div className={cn('flex', 'flex-col', 'gap-1', 'w-full')}>
+								<Select
+									value={field.state.value.toString()}
+									onValueChange={e => field.handleChange(e as GrossIncomeType)}
+									label={'Per'}
+									required
+								>
+									<SelectTrigger className={cn('w-full', 'sm:w-1/2')}>
+										<SelectValue placeholder="Select income type" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="hourly">Hour</SelectItem>
+										<SelectItem value="yearly">Year</SelectItem>
+									</SelectContent>
+								</Select>
+								<FieldError field={field} />
+							</div>
+						)}
+					/>
 				</div>
 
-				<div className={cn('flex', 'gap-3')}>
-					<Input
-						id={'hours-per-week'}
-						label={'Hours per week'}
-						type="number"
-						step="0.5"
-						min="0"
-						placeholder="0"
-						value={formattedInputs.hoursPerWeek}
-						onChange={e => handleInputChange('hoursPerWeek', e.target.value)}
-						required
+				<div className={cn('flex', 'gap-3', 'items-start')}>
+					<form.Field
+						name={'hoursPerWeek'}
+						validators={{
+							onChange: validateHoursPerWeek,
+						}}
+						children={field => (
+							<div className={cn('flex', 'flex-col', 'gap-1', 'w-full')}>
+								<Input
+									id={field.name}
+									label={'Hours per week'}
+									type={'number'}
+									step="0.5"
+									min="0"
+									placeholder="0"
+									value={field.state.value.toString()}
+									onChange={e => field.handleChange(e.target.value)}
+									required
+								/>
+								<FieldError field={field} />
+							</div>
+						)}
 					/>
-					<Input
-						id={'days-per-week'}
-						label={'Days worked per week'}
-						type="number"
-						step="1"
-						min="0"
-						placeholder="0"
-						value={formattedInputs.daysPerWeek}
-						onChange={e => handleInputChange('daysPerWeek', e.target.value)}
-						required
+
+					<form.Field
+						name={'daysPerWeek'}
+						validators={{
+							onChange: validateDaysPerWeek,
+						}}
+						children={field => (
+							<div className={cn('flex', 'flex-col', 'gap-1', 'w-full')}>
+								<Input
+									id={field.name}
+									label={'Days worked per week'}
+									type={'number'}
+									step="1"
+									min="0"
+									placeholder="0"
+									value={field.state.value.toString()}
+									onChange={e => field.handleChange(e.target.value)}
+									required
+								/>
+								<FieldError field={field} />
+							</div>
+						)}
 					/>
 				</div>
 
 				<Separator />
 
-				<div className={cn('flex', 'flex-col', 'sm:flex-row', 'gap-3', 'items-end')}>
+				<div className={cn('flex', 'flex-col', 'sm:flex-row', 'gap-3', 'items-start')}>
 					{/* Province or Territory selection */}
-					<Select
-						label={'Province / Territory'}
-						value={formattedInputs.provinceCode}
-						onValueChange={e => handleProvinceCodeChange(e)}
-						required
-					>
-						<SelectTrigger className={cn('w-full')}>
-							<SelectValue placeholder="Select a province or territory" />
-						</SelectTrigger>
-						<SelectContent>{canadianProvinceAndTerritorySelectItems}</SelectContent>
-					</Select>
+					<form.Field
+						name={'provinceCode'}
+						children={field => (
+							<div className={cn('flex', 'flex-col', 'gap-1', 'w-full')}>
+								<Select
+									label={'Province / Territory'}
+									value={field.state.value ? field.state.value.toString() : ''}
+									onValueChange={e => field.handleChange(e as CanadianProvinceOrTerritoryCode)}
+									required
+								>
+									<SelectTrigger className={cn('w-full')}>
+										<SelectValue placeholder="Select a province or territory" />
+									</SelectTrigger>
+									<SelectContent>{canadianProvinceAndTerritorySelectItems}</SelectContent>
+								</Select>
+								<FieldError field={field} />
+							</div>
+						)}
+					/>
 
 					{/* Tax year selection */}
-					<Select
-						label={'Year'}
-						value={formattedInputs.year}
-						onValueChange={e => handleYearChange(e)}
-						required
-					>
-						<SelectTrigger className={cn('w-full')}>
-							<SelectValue placeholder="Select tax year" />
-						</SelectTrigger>
-						<SelectContent>{taxYearSelectItems}</SelectContent>
-					</Select>
+					<form.Field
+						name={'year'}
+						children={field => (
+							<div className={cn('flex', 'flex-col', 'gap-1', 'w-full')}>
+								<Select
+									label={'Year'}
+									value={field.state.value ? field.state.value.toString() : ''}
+									onValueChange={e => field.handleChange(parseInt(e) as TaxYear)}
+									required
+								>
+									<SelectTrigger className={cn('w-full')}>
+										<SelectValue placeholder="Select tax year" />
+									</SelectTrigger>
+									<SelectContent>{taxYearSelectItems}</SelectContent>
+								</Select>
+								<FieldError field={field} />
+							</div>
+						)}
+					/>
 				</div>
 			</CardContent>
 		</Card>
@@ -188,15 +275,36 @@ const RequiredInputsCard = () => {
 
 const OptionalInputsCard = () => {
 	const {
-		overtimeHoursPerWeek,
-		overtimeHourMultiplier,
-		handleInputChange,
+		hoursPerWeek,
+		handleParamsChange,
 	} = useIncomeCalculatorContext();
 
-	const formattedInputs = {
-		overtimeHoursPerWeek: overtimeHoursPerWeek === 0 ? '' : overtimeHoursPerWeek.toString(),
-		overtimeHourMultiplier: overtimeHourMultiplier === 0 ? '' : overtimeHourMultiplier.toString(),
-	};
+	const form = useForm({
+		defaultValues: {
+			overtimeHoursPerWeek: '',
+			overtimeHourMultiplier: '1.5',
+		},
+		validators: {
+			onChange: ({ value }) => handleParamsChange({
+				overtimeHoursPerWeek: parseFloat(value.overtimeHoursPerWeek) || 0,
+				overtimeHourMultiplier: parseFloat(value.overtimeHourMultiplier) || 0,
+			}),
+		},
+	});
+
+	const validateOvertimeHoursPerWeek = useCallback(({ value }: { value: string }): string | undefined => {
+		if (!value) return undefined;
+
+		if (!isNegativeOrZero(value)) return 'Please enter a valid number';
+		if ((parseFloat(value) + hoursPerWeek) > 168) return 'Overtime hours per week + hours per week cannot exceed 168';
+	}, [hoursPerWeek]);
+
+	const validateOvertimeHourMultiplier = ({ value }: { value: string }): string | undefined => {
+		if (!value) return undefined;
+
+		if (!isNegativeOrZero(value)) return 'Please enter a valid number';
+		if (parseFloat(value) < 1) return 'Overtime hour multiplier must be at least 1 (eg. 1.5)';
+	}
 
 	return (
 		<Card>
@@ -204,27 +312,51 @@ const OptionalInputsCard = () => {
 				<CardTitle>Optional Inputs</CardTitle>
 			</CardHeader>
 			<CardContent className={cn('flex', 'flex-col', 'gap-3')}>
+
 				{/* Overtime inputs */}
 				<div className={cn('flex', 'gap-3')}>
-					<Input
-						id={'overtime-hours-per-week'}
-						label={'Overtime hours per week'}
-						type="number"
-						step="1"
-						min="0"
-						placeholder="0"
-						value={formattedInputs.overtimeHoursPerWeek}
-						onChange={e => handleInputChange('overtimeHoursPerWeek', e.target.value)}
+					<form.Field
+						name={'overtimeHoursPerWeek'}
+						validators={{
+							onChange: validateOvertimeHoursPerWeek,
+						}}
+						children={field => (
+							<div className={cn('flex', 'flex-col', 'gap-1', 'w-full')}>
+								<Input
+									id={field.name}
+									label={'Overtime hours per week'}
+									type={'number'}
+									step="0.5"
+									min="0"
+									placeholder="0"
+									value={field.state.value.toString()}
+									onChange={e => field.handleChange(e.target.value)}
+								/>
+								<FieldError field={field} />
+							</div>
+						)}
 					/>
-					<Input
-						id={'overtime-hour-multiplier'}
-						label={'Overtime hour multiplier'}
-						type="number"
-						step="1"
-						min="0"
-						placeholder="0"
-						value={formattedInputs.overtimeHourMultiplier}
-						onChange={e => handleInputChange('overtimeHourMultiplier', e.target.value)}
+
+					<form.Field
+						name={'overtimeHourMultiplier'}
+						validators={{
+							onChange: validateOvertimeHourMultiplier,
+						}}
+						children={field => (
+							<div className={cn('flex', 'flex-col', 'gap-1', 'w-full')}>
+								<Input
+									id={field.name}
+									label={'Overtime hour multiplier'}
+									type={'number'}
+									step="0.25"
+									min="0"
+									placeholder="0"
+									value={field.state.value.toString()}
+									onChange={e => field.handleChange(e.target.value)}
+								/>
+								<FieldError field={field} />
+							</div>
+						)}
 					/>
 				</div>
 			</CardContent>
@@ -239,7 +371,7 @@ const CompletedOutputsSection = () => {
 
 	return (
 		<>
-			<Separator/>
+			<Separator />
 
 			<NetIncomeCard />
 
