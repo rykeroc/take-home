@@ -87,7 +87,7 @@ export const useIncomeCalculator = (): IncomeCalculator => {
 				year: fields.year,
 			});
 		},
-		[],
+		[handleDeductionsParamsChange],
 	);
 
 	// Reset input to default values
@@ -120,17 +120,14 @@ export const useIncomeCalculator = (): IncomeCalculator => {
 
 		const hourlyWage = grossIncomeType === 'hourly' ? grossIncome : calculateHourlyIncomeWithAnnualIncome(grossIncome, hoursPerWeek);
 		const overtimePay = calculateAnnualOvertimePay(hourlyWage, overtimeHoursPerWeek, overtimeHourMultiplier);
-
-		let taxableAnnualIncome = calculateAnnualIncomeWithHourlyWage(hourlyWage, hoursPerWeek) + overtimePay;
+		const taxableAnnualIncome = calculateAnnualIncomeWithHourlyWage(hourlyWage, hoursPerWeek) + overtimePay;
 
 		handleDeductionsParamsChange({grossAnnualIncome: taxableAnnualIncome});
 	}, [
-		calculatorParams.grossIncomeType,
+		calculatorParams,
 		calculatorParams.grossIncome,
 		calculatorParams.hoursPerWeek,
 		calculatorParams.daysPerWeek,
-		calculatorParams.overtimeHoursPerWeek,
-		calculatorParams.overtimeHourMultiplier,
 		resetOutput,
 		handleDeductionsParamsChange,
 	]);

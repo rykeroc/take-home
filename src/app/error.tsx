@@ -2,7 +2,6 @@
 
 import { cn } from '@/lib/utils/tailwind';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import { useEffect } from 'react';
 import { logger } from '@/lib/logger';
 

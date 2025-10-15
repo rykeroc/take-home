@@ -1,3 +1,5 @@
+/* eslint-disable react/no-children-prop */
+
 'use client';
 
 import { useSearchParams } from 'next/navigation';
