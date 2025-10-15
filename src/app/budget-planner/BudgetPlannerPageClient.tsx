@@ -25,7 +25,9 @@ const BudgetPlannerPageClient = () => {
 			<div className={cn('flex', 'flex-col', 'gap-4', 'w-full')}>
 				<HeaderSection />
 
-				<InputsCard />
+				<BudgetInformationCard />
+
+				<BudgetCategoriesCard />
 
 				<Summary />
 			</div>
@@ -52,7 +54,7 @@ const HeaderSection = () => {
 	);
 };
 
-const InputsCard = () => {
+const BudgetInformationCard = () => {
 	const { totalBudget, handleBudgetChange } = useMonthlyBudgetPlannerContext();
 	const isZeroBudget = totalBudget === 0;
 	const totalBudgetValue = isZeroBudget ? '' : totalBudget.toString();
@@ -72,14 +74,24 @@ const InputsCard = () => {
 					value={totalBudgetValue}
 					onChange={e => handleBudgetChange(e.target.value)}
 				/>
+			</CardContent>
+		</Card>
+	);
+};
 
-				{!isZeroBudget && (
-					<>
-						<Separator />
+const BudgetCategoriesCard = () => {
+	const { totalBudget } = useMonthlyBudgetPlannerContext();
+	const isZeroBudget = totalBudget === 0;
 
-						<BudgetCategoryList />
-					</>
-				)}
+	if (isZeroBudget) return null;
+
+	return (
+		<Card>
+			<CardHeader>
+				<CardTitle>Budget Categories</CardTitle>
+			</CardHeader>
+			<CardContent className={cn('flex', 'flex-col', 'gap-4')}>
+				<BudgetCategoryList />
 			</CardContent>
 		</Card>
 	);
@@ -92,15 +104,18 @@ const Summary = () => {
 	if (totalBudget === 0 || userDefinedCategories.length === 0) return null;
 
 	return (
-		<Card>
-			<CardHeader className={cn('flex', 'justify-between')}>
-				<CardTitle>Summary</CardTitle>
+		<>
+			<Separator />
+			<Card>
+				<CardHeader className={cn('flex', 'justify-between')}>
+					<CardTitle>Summary</CardTitle>
 
-				<BudgetExportDropdown />
-			</CardHeader>
-			<CardContent>
-				<BudgetCategoriesBreakdownPieChart />
-			</CardContent>
-		</Card>
+					<BudgetExportDropdown />
+				</CardHeader>
+				<CardContent>
+					<BudgetCategoriesBreakdownPieChart />
+				</CardContent>
+			</Card>
+		</>
 	);
 };
