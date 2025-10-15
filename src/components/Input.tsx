@@ -28,8 +28,11 @@ function Input({ id, label, className, type, prefix, ...props }: InputProps) {
 	return (
 		<div className={cn('grid w-full items-center gap-3', className)}>
 			{label && (
-				<Label htmlFor={id} className={cn('text-muted-foreground')}>
+				<Label htmlFor={id} className={cn('text-muted-foreground', "gap-1")}>
 					{label}
+					{
+						props.required && <span><p className={'text-red-500'}>*</p></span>
+					}
 				</Label>
 			)}
 			<div className={cn('flex', 'gap-2', 'w-full')}>
