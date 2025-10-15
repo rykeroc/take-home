@@ -29,7 +29,9 @@ export const IncomeCalculatorPageClient = () => (
 		<div className={cn('flex', 'flex-col', 'gap-4', 'w-full')}>
 			<HeaderSection />
 
-			<InputsCard />
+			<RequiredInputsCard />
+
+			<OptionalInputsCard />
 
 			<CompletedOutputsSection />
 		</div>
@@ -55,7 +57,7 @@ const HeaderSection = () => {
 	);
 };
 
-const InputsCard = () => {
+const RequiredInputsCard = () => {
 	const {
 		grossIncome,
 		grossIncomeType,
@@ -94,7 +96,7 @@ const InputsCard = () => {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Inputs</CardTitle>
+				<CardTitle>Required Inputs</CardTitle>
 			</CardHeader>
 			<CardContent className={cn('flex', 'flex-col', 'gap-3')}>
 				<div className={cn('flex', 'gap-3', 'items-end')}>
@@ -108,6 +110,7 @@ const InputsCard = () => {
 						placeholder="0"
 						value={formattedInputs.grossIncome}
 						onChange={e => handleInputChange('grossIncome', e.target.value)}
+						required
 					/>
 
 					<Select
@@ -134,6 +137,7 @@ const InputsCard = () => {
 						placeholder="0"
 						value={formattedInputs.hoursPerWeek}
 						onChange={e => handleInputChange('hoursPerWeek', e.target.value)}
+						required
 					/>
 					<Input
 						id={'days-per-week'}
@@ -144,6 +148,7 @@ const InputsCard = () => {
 						placeholder="0"
 						value={formattedInputs.daysPerWeek}
 						onChange={e => handleInputChange('daysPerWeek', e.target.value)}
+						required
 					/>
 				</div>
 
@@ -155,6 +160,7 @@ const InputsCard = () => {
 						label={'Province / Territory'}
 						value={formattedInputs.provinceCode}
 						onValueChange={e => handleProvinceCodeChange(e)}
+						required
 					>
 						<SelectTrigger className={cn('w-full')}>
 							<SelectValue placeholder="Select a province or territory" />
@@ -167,12 +173,59 @@ const InputsCard = () => {
 						label={'Year'}
 						value={formattedInputs.year}
 						onValueChange={e => handleYearChange(e)}
+						required
 					>
 						<SelectTrigger className={cn('w-full')}>
 							<SelectValue placeholder="Select tax year" />
 						</SelectTrigger>
 						<SelectContent>{taxYearSelectItems}</SelectContent>
 					</Select>
+				</div>
+			</CardContent>
+		</Card>
+	);
+};
+
+const OptionalInputsCard = () => {
+	const {
+		overtimeHoursPerWeek,
+		overtimeHourMultiplier,
+		handleInputChange,
+	} = useIncomeCalculatorContext();
+
+	const formattedInputs = {
+		overtimeHoursPerWeek: overtimeHoursPerWeek === 0 ? '' : overtimeHoursPerWeek.toString(),
+		overtimeHourMultiplier: overtimeHourMultiplier === 0 ? '' : overtimeHourMultiplier.toString(),
+	};
+
+	return (
+		<Card>
+			<CardHeader>
+				<CardTitle>Optional Inputs</CardTitle>
+			</CardHeader>
+			<CardContent className={cn('flex', 'flex-col', 'gap-3')}>
+				{/* Overtime inputs */}
+				<div className={cn('flex', 'gap-3')}>
+					<Input
+						id={'overtime-hours-per-week'}
+						label={'Overtime hours per week'}
+						type="number"
+						step="1"
+						min="0"
+						placeholder="0"
+						value={formattedInputs.overtimeHoursPerWeek}
+						onChange={e => handleInputChange('overtimeHoursPerWeek', e.target.value)}
+					/>
+					<Input
+						id={'overtime-hour-multiplier'}
+						label={'Overtime hour multiplier'}
+						type="number"
+						step="1"
+						min="0"
+						placeholder="0"
+						value={formattedInputs.overtimeHourMultiplier}
+						onChange={e => handleInputChange('overtimeHourMultiplier', e.target.value)}
+					/>
 				</div>
 			</CardContent>
 		</Card>
