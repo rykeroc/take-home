@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-	calculateAnnualIncomeWithHourlyWage,
+	calculateAnnualIncomeWithHourlyWage, calculateAnnualOvertimePay, calculateHourlyIncomeWithAnnualIncome,
 	calculateIncome,
 	WageResults,
 } from '@/lib/income-calculations';
@@ -13,6 +13,8 @@ interface IncomeCalculatorInput {
 	grossIncomeType: GrossIncomeType;
 	hoursPerWeek: number;
 	daysPerWeek: number;
+	overtimeHoursPerWeek: number,
+	overtimeHourMultiplier: number,
 }
 
 export interface IncomeCalculator
@@ -34,6 +36,8 @@ const defaultInput: IncomeCalculatorInput = {
 	grossIncomeType: 'hourly',
 	hoursPerWeek: 37.5,
 	daysPerWeek: 5,
+	overtimeHoursPerWeek: 0,
+	overtimeHourMultiplier: 0,
 };
 
 const defaultWages: WageResults = {
@@ -115,14 +119,18 @@ export const useIncomeCalculator = (): IncomeCalculator => {
 			return;
 		}
 
-		// Calculate annual income for tax calculations
-		const taxableAnnualIncome =
-			calculatorInput.grossIncomeType === 'hourly'
-				? calculateAnnualIncomeWithHourlyWage(
-						calculatorInput.grossIncome,
-						calculatorInput.hoursPerWeek,
-					)
-				: calculatorInput.grossIncome;
+		const {
+			grossIncomeType,
+			grossIncome,
+			hoursPerWeek,
+			overtimeHoursPerWeek,
+			overtimeHourMultiplier,
+		} = calculatorInput;
+
+		const hourlyWage = grossIncomeType === 'hourly' ? grossIncome : calculateHourlyIncomeWithAnnualIncome(grossIncome, hoursPerWeek);
+		const overtimePay = calculateAnnualOvertimePay(hourlyWage, overtimeHoursPerWeek, overtimeHourMultiplier);
+
+		let taxableAnnualIncome = calculateAnnualIncomeWithHourlyWage(hourlyWage, hoursPerWeek) + overtimePay;
 
 		handleGrossAnnualIncomeChange(taxableAnnualIncome.toString());
 	}, [
@@ -130,6 +138,8 @@ export const useIncomeCalculator = (): IncomeCalculator => {
 		calculatorInput.grossIncome,
 		calculatorInput.hoursPerWeek,
 		calculatorInput.daysPerWeek,
+		calculatorInput.overtimeHoursPerWeek,
+		calculatorInput.overtimeHourMultiplier,
 		resetOutput,
 		handleGrossAnnualIncomeChange,
 	]);
