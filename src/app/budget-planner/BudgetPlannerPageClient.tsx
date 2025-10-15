@@ -14,6 +14,9 @@ import BudgetExportDropdown from '@/components/BudgetExportDropdown';
 import BudgetCategoriesBreakdownPieChart from '@/components/BudgetCategoriesBreakdownPieChart';
 import React from 'react';
 import { cn } from '@/lib/utils/tailwind';
+import { useForm } from '@tanstack/react-form';
+import { isGreaterThanZero } from '@/lib/utils/validations';
+import FieldError from '@/components/FieldError';
 
 const BudgetPlannerPageClient = () => {
 	const searchParams = useSearchParams();
@@ -56,23 +59,47 @@ const HeaderSection = () => {
 
 const BudgetInformationCard = () => {
 	const { totalBudget, handleBudgetChange } = useMonthlyBudgetPlannerContext();
-	const isZeroBudget = totalBudget === 0;
-	const totalBudgetValue = isZeroBudget ? '' : totalBudget.toString();
+
+	const form = useForm({
+		defaultValues: {
+			budget: totalBudget === 0 ? '' : totalBudget.toString(),
+		},
+		validators: {
+			onChange: ({ value }) => handleBudgetChange(value.budget),
+		},
+	});
+
+	const isValidBudget = ({ value }: { value: string }): string | undefined => {
+		if (!value) return;
+		if (!isGreaterThanZero(value)) return 'Please enter a valid budget greater than 0';
+	};
+
 	return (
 		<Card>
 			<CardHeader>
 				<CardTitle>Budget Information</CardTitle>
 			</CardHeader>
 			<CardContent className={cn('flex', 'flex-col', 'gap-4')}>
-				<Input
-					id={'budget'}
-					className={cn('w-full', 'md:w-1/2', 'lg:w-1/3', 'xl:w-1/4')}
-					type={'number'}
-					placeholder={'0'}
-					label={'Monthly Budget'}
-					prefix={'$'}
-					value={totalBudgetValue}
-					onChange={e => handleBudgetChange(e.target.value)}
+				<form.Field
+					name={'budget'}
+					validators={{
+						onChange: isValidBudget,
+					}}
+					children={(field) => (
+						<div className={cn('flex', 'flex-col', 'gap-1', 'w-full')}>
+							<Input
+								id={'budget'}
+								className={cn('w-full', 'md:w-1/2', 'lg:w-1/3', 'xl:w-1/4')}
+								type={'number'}
+								placeholder={'0'}
+								label={'Monthly Budget'}
+								prefix={'$'}
+								value={field.state.value}
+								onChange={e => field.handleChange(e.target.value)}
+							/>
+							<FieldError field={field} />
+						</div>
+					)}
 				/>
 			</CardContent>
 		</Card>
@@ -81,9 +108,8 @@ const BudgetInformationCard = () => {
 
 const BudgetCategoriesCard = () => {
 	const { totalBudget } = useMonthlyBudgetPlannerContext();
-	const isZeroBudget = totalBudget === 0;
 
-	if (isZeroBudget) return null;
+	if (!totalBudget && !isGreaterThanZero(totalBudget.toString())) return null;
 
 	return (
 		<Card>
