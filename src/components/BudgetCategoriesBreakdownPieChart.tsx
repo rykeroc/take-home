@@ -25,7 +25,7 @@ export default function BudgetCategoriesBreakdownPieChart(
 		[userDefinedCategories, unallocatedBudget],
 	);
 
-	const pieData = allCategories.map(category => ({
+	const pieData = allCategories.filter(value => value.amount != 0).map(category => ({
 		id: category.id,
 		value: category.amount,
 		fill: category.color,

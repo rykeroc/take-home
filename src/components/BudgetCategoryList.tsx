@@ -52,8 +52,6 @@ export default function BudgetCategoryList() {
 
 	return (
 		<div className={cn('flex', 'flex-col', 'gap-4')}>
-			<Label className={cn('text-muted-foreground')}>Budget Categories</Label>
-
 			{/* Add Budget category form */}
 			{/* Only shown if there is unallocated budget remaining */}
 			{unallocatedBudget.amount > 0 && <NewBudgetCategoryForm />}

@@ -239,6 +239,8 @@ const CompletedOutputsSection = () => {
 
 	return (
 		<>
+			<Separator/>
+
 			<NetIncomeCard />
 
 			<AnnualDeductionsCard />
