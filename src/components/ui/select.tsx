@@ -13,7 +13,14 @@ function Select({
 }: React.ComponentProps<typeof SelectPrimitive.Root> & { label?: string }) {
 	return (
 		<div className="grid w-full items-center gap-3">
-			{label && <Label className={cn('text-muted-foreground')}>{label}</Label>}
+			{label && (
+				<Label className={cn('text-muted-foreground', "gap-1")}>
+					{label}
+					{
+						props.required && <span><p className={'text-red-500'}>*</p></span>
+					}
+				</Label>
+			)}
 			<SelectPrimitive.Root data-slot="select" {...props} />
 		</div>
 	);
