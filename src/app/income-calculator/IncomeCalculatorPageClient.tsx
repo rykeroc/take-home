@@ -25,7 +25,7 @@ import Link from 'next/link';
 import React, { useCallback } from 'react';
 import { useForm } from '@tanstack/react-form';
 import FieldError from '@/components/FieldError';
-import { isNegativeOrZero } from '@/lib/utils/validations';
+import { isGreaterThanZero } from '@/lib/utils/validations';
 
 export const IncomeCalculatorPageClient = () => (
 	<IncomeCalculatorProvider>
@@ -103,20 +103,20 @@ const RequiredInputsCard = () => {
 	const validateGrossIncome = ({ value }: { value: string }): string | undefined => {
 		if (!value) return undefined;
 
-		if (!isNegativeOrZero(value)) return 'Please enter a valid number';
+		if (!isGreaterThanZero(value)) return 'Please enter a valid number';
 	};
 
 	const validateHoursPerWeek = ({ value }: { value: string }): string | undefined => {
 		if (!value) return undefined;
 
-		if (!isNegativeOrZero(value)) return 'Please enter a valid number';
+		if (!isGreaterThanZero(value)) return 'Please enter a valid number';
 		if (parseFloat(value) > 168) return 'Hours per week cannot be more than 168';
 	};
 
 	const validateDaysPerWeek = ({ value }: { value: string }): string | undefined => {
 		if (!value) return undefined;
 
-		if (!isNegativeOrZero(value)) return 'Please enter a valid number';
+		if (!isGreaterThanZero(value)) return 'Please enter a valid number';
 		if (parseInt(value) > 7) return 'Days per week cannot be more than 7';
 	};
 
@@ -295,14 +295,14 @@ const OptionalInputsCard = () => {
 	const validateOvertimeHoursPerWeek = useCallback(({ value }: { value: string }): string | undefined => {
 		if (!value) return undefined;
 
-		if (!isNegativeOrZero(value)) return 'Please enter a valid number';
+		if (!isGreaterThanZero(value)) return 'Please enter a valid number';
 		if ((parseFloat(value) + hoursPerWeek) > 168) return 'Overtime hours per week + hours per week cannot exceed 168';
 	}, [hoursPerWeek]);
 
 	const validateOvertimeHourMultiplier = ({ value }: { value: string }): string | undefined => {
 		if (!value) return undefined;
 
-		if (!isNegativeOrZero(value)) return 'Please enter a valid number';
+		if (!isGreaterThanZero(value)) return 'Please enter a valid number';
 		if (parseFloat(value) < 1) return 'Overtime hour multiplier must be at least 1 (eg. 1.5)';
 	}
 
